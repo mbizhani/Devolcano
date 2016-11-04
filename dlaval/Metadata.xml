@@ -1,26 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE meta PUBLIC
+		"Meta Data"
+		"http://www.devocative.org/dtd/devolcano-metadata.dtd">
+
 <meta>
 	<classes>
 		<class fqn="">
-			<info ignore="false" hasForm="false" hasList="false"/>
+			<cinfo ignore="false" hasForm="false" hasList="false"/>
 			<id ref=""/>
 			<fields>
 				<field name="">
-					<info ignore="false" hasForm="false" hasList="false"/>
+					<finfo ignore="false" hasForm="false" hasList="false"/>
 				</field>
 			</fields>
 		</class>
 		<class fqn="org.devocative.devolcano.test.entity.Person">
-			<info/>
+			<cinfo/>
 			<id ref="id"/>
 			<fields>
 				<field name="id">
-					<info/>
+					<finfo/>
 				</field>
 				<field name="name">
-					<info/>
+					<finfo/>
 				</field>
 				<field name="birthDate">
-					<info/>
+					<finfo/>
 				</field>
 			</fields>
 		</class>

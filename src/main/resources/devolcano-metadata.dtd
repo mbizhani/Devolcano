@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+		<!ELEMENT meta (classes)*>
+		<!ELEMENT classes (class)*>
+		<!ELEMENT class (cinfo|id|fields)*>
+		<!ATTLIST class
+				fqn CDATA #REQUIRED>
+		<!ELEMENT cinfo (#PCDATA)>
+		<!ATTLIST cinfo
+				ignore (true|false)
+				hasForm (true|false)
+				hasList (true|false)
+				>
+		<!ELEMENT id (#PCDATA)>
+		<!ATTLIST id
+				ref CDATA #REQUIRED>
+		<!ELEMENT fields (field)*>
+		<!ATTLIST field
+				name CDATA #REQUIRED>
+		<!ELEMENT field (finfo)*>
+		<!ELEMENT finfo (#PCDATA)>
+		<!ATTLIST finfo
+				ignore (true|false)
+				hasForm (true|false)
+				hasList (true|false)
+				>

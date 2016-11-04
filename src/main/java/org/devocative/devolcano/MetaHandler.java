@@ -91,7 +91,16 @@ public class MetaHandler {
 
 		XStream xStream = getXStream();
 		try {
-			xStream.toXML(X_META, new FileWriter(file));
+			String xml = xStream.toXML(X_META);
+			xml = xml.replaceAll("  ", "\t");
+
+			FileWriter writer = new FileWriter(file);
+			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
+			writer.write("<!DOCTYPE meta PUBLIC\n");
+			writer.write("\t\t\"Meta Data\"\n");
+			writer.write("\t\t\"http://www.devocative.org/dtd/devolcano-metadata.dtd\">\n\n");
+			writer.write(xml);
+			writer.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

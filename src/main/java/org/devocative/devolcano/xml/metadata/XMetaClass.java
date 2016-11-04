@@ -14,6 +14,7 @@ public class XMetaClass implements Serializable {
 	@XStreamAsAttribute
 	private String fqn;
 
+	@XStreamAlias("cinfo")
 	private XMetaInfoClass info;
 
 	private XMetaId id;

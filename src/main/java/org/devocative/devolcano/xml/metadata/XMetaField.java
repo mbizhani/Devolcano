@@ -13,6 +13,7 @@ public class XMetaField implements Serializable {
 	@XStreamAsAttribute
 	private String ownerFqn;
 
+	@XStreamAlias("finfo")
 	private XMetaInfoField info;
 
 	// ------------------------------
