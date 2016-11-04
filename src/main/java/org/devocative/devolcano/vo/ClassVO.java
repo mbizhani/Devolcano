@@ -1,6 +1,9 @@
 package org.devocative.devolcano.vo;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.devocative.devolcano.MetaHandler;
+import org.devocative.devolcano.xml.metadata.XMetaClass;
+import org.devocative.devolcano.xml.metadata.XMetaInfoClass;
 
 import javax.persistence.Entity;
 import java.beans.PropertyDescriptor;
@@ -12,6 +15,7 @@ import java.util.*;
 
 public class ClassVO {
 	private Class cls;
+	private XMetaClass xMetaClass;
 	private Type[] realizedTypeParams;
 
 	private Map<String, FieldVO> allFieldsMap;
@@ -145,6 +149,37 @@ public class ClassVO {
 		}
 		return null;
 	}
+
+	public XMetaInfoClass getInfo() {
+		if (xMetaClass == null) {
+			xMetaClass = MetaHandler.findXMetaClass(cls.getName());
+		}
+
+		return xMetaClass.getInfo();
+	}
+
+	// ---------------- XMetaInfoClass Helper Methods ----------------
+
+	public boolean isOk() {
+		return getInfo() == null || !getInfo().getIgnore();
+	}
+
+	public boolean hasForm() {
+		return isOk() && (getInfo() == null || getInfo().getHasForm());
+	}
+
+	/*public boolean hasList() {
+		return isOk() && (getInfo() == null || (getInfo().getHasList() && getInfo().hasSVO()));
+	}*/
+
+	/*public boolean hasView() {
+		return isOk() && (cg == null || cg.hasView());
+	}*/
+
+	/*public boolean hasSearch() {
+		return isOk() && (cg == null || cg.hasSearch());
+	}*/
+
 
 	// ---------------- Hibernate & Spring Helper Methods ----------------
 

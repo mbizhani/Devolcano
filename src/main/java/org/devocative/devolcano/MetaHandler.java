@@ -7,15 +7,11 @@ import org.devocative.devolcano.xml.metadata.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Entity;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 public class MetaHandler {
 	private static final Logger logger = LoggerFactory.getLogger(MetaHandler.class);
@@ -37,45 +33,55 @@ public class MetaHandler {
 
 			X_META = new XMeta();
 			X_META.setClasses(new ArrayList<XMetaClass>());
-			X_META.setScans(new ArrayList<XMetaPackage>());
 		}
 
 		CLASS_LOADER = Thread.currentThread().getContextClassLoader();
 	}
 
-	public static void scan() {
-		logger.info("Start Scanning ...");
+	public static Map<XMetaClass, List<XMetaField>> scan(String pkg, boolean includeSubPackages) {
+		logger.info("Start Scanning Package: {}", pkg);
 
-		for (XMetaPackage xMetaPackage : X_META.getScans()) {
-			List<Class> classes = processPackage(xMetaPackage.getFqn(), true);
-			for (Class aClass : classes) {
-				if (aClass.isAnnotationPresent(Entity.class)) { //TODO
-					logger.info("\tscanning class: {}", aClass.getName());
-					XMetaClass xMetaClass = X_META.findXMetaClass(aClass.getName());
+		Map<XMetaClass, List<XMetaField>> result = new HashMap<>();
 
-					if (xMetaClass == null) {
-						xMetaClass = new XMetaClass();
-						xMetaClass.setFqn(aClass.getName());
-						xMetaClass.setFields(new ArrayList<XMetaField>());
-						X_META.getClasses().add(xMetaClass);
-					}
+		List<Class> classes = processPackage(pkg, includeSubPackages);
+		for (Class aClass : classes) {
+			ClassVO classVO = new ClassVO(aClass);
 
-					if (xMetaClass.getInfo() == null) {
-						xMetaClass.setInfo(new XMetaInfoClass());
-					}
+			if (classVO.isNormal()) {
+				logger.info("\tscanning class: {}", aClass.getName());
+				XMetaClass xMetaClass = X_META.findXMetaClass(aClass.getName());
 
-					List<XMetaField> idFields = scanFields(aClass, xMetaClass);
+				if (xMetaClass == null) {
+					xMetaClass = new XMetaClass();
+					xMetaClass.setFqn(aClass.getName());
+					xMetaClass.setFields(new ArrayList<XMetaField>());
+					X_META.getClasses().add(xMetaClass);
 
-					if (xMetaClass.getId() == null) {
-						xMetaClass.setId(new XMetaId());
-					}
-
-					xMetaClass.getId().setRef(toCSV(idFields));
+					result.put(xMetaClass, null); // New Class Added!
 				}
+
+				if (xMetaClass.getInfo() == null) {
+					xMetaClass.setInfo(new XMetaInfoClass());
+				}
+
+				List<XMetaField> idFields = new ArrayList<>();
+				List<XMetaField> newXMetaFields = scanFields(classVO, xMetaClass, idFields);
+
+				if (!newXMetaFields.isEmpty() && !result.containsKey(xMetaClass)) {
+					result.put(xMetaClass, newXMetaFields);
+				}
+
+				if (xMetaClass.getId() == null) {
+					xMetaClass.setId(new XMetaId());
+				}
+
+				xMetaClass.getId().setRef(toCSV(idFields));
 			}
 		}
 
-		logger.info("Scanning Finished!");
+		logger.info("Finished Scanning Package: {}", pkg);
+
+		return result;
 	}
 
 	public static void write() {
@@ -89,6 +95,10 @@ public class MetaHandler {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static XMetaClass findXMetaClass(String fqn) {
+		return X_META.findXMetaClass(fqn);
 	}
 
 	public static List<Class> processPackage(String packageName, Boolean includeSubPackages) {
@@ -110,17 +120,29 @@ public class MetaHandler {
 		}
 	}
 
+	public static String toCSV(Collection col) {
+		StringBuilder builder = new StringBuilder();
+		for (Object o : col) {
+			builder
+				.append(o.toString())
+				.append(",");
+		}
+		String s = builder.toString();
+		return s.substring(0, s.length() - 1);
+	}
+
 	// ------------------------------
 
-	private static List<XMetaField> scanFields(Class aClass, XMetaClass xMetaClass) {
-		List<XMetaField> idFields = new ArrayList<>();
-		ClassVO classVO = new ClassVO(aClass);
+	private static List<XMetaField> scanFields(ClassVO classVO, XMetaClass xMetaClass, List<XMetaField> idFields) {
+		List<XMetaField> result = new ArrayList<>();
+
 		for (FieldVO fieldVO : classVO.getDeclaredFieldsMap().values()) {
 			XMetaField xMetaField = xMetaClass.findXMetaField(fieldVO.getName());
 			if (xMetaField == null) {
 				xMetaField = new XMetaField();
 				xMetaField.setName(fieldVO.getName());
 				xMetaClass.getFields().add(xMetaField);
+				result.add(xMetaField);
 			}
 
 			if (xMetaField.getInfo() == null) {
@@ -131,7 +153,8 @@ public class MetaHandler {
 				idFields.add(xMetaField);
 			}
 		}
-		return idFields;
+
+		return result;
 	}
 
 	private static List<Class> findClasses(File directory, String packageName, Boolean includeSubPackages) throws ClassNotFoundException {
@@ -163,16 +186,5 @@ public class MetaHandler {
 		XStream xStream = new XStream();
 		xStream.processAnnotations(XMeta.class);
 		return xStream;
-	}
-
-	private static String toCSV(Collection col) {
-		StringBuilder builder = new StringBuilder();
-		for (Object o : col) {
-			builder
-				.append(o.toString())
-				.append(",");
-		}
-		String s = builder.toString();
-		return s.substring(0, s.length() - 1);
 	}
 }

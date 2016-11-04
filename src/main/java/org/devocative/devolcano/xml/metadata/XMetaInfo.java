@@ -17,7 +17,7 @@ public abstract class XMetaInfo implements Serializable {
 	// ------------------------------
 
 	public Boolean getIgnore() {
-		return ignore;
+		return ignore != null ? ignore : false;
 	}
 
 	public void setIgnore(Boolean ignore) {
@@ -25,7 +25,7 @@ public abstract class XMetaInfo implements Serializable {
 	}
 
 	public Boolean getHasForm() {
-		return hasForm;
+		return hasForm != null ? hasForm : true;
 	}
 
 	public void setHasForm(Boolean hasForm) {
@@ -33,7 +33,7 @@ public abstract class XMetaInfo implements Serializable {
 	}
 
 	public Boolean getHasList() {
-		return hasList;
+		return hasList != null ? hasList : true;
 	}
 
 	public void setHasList(Boolean hasList) {

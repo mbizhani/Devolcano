@@ -1,0 +1,28 @@
+<meta>
+	<classes>
+		<class fqn="">
+			<info ignore="false" hasForm="false" hasList="false"/>
+			<id ref=""/>
+			<fields>
+				<field name="">
+					<info ignore="false" hasForm="false" hasList="false"/>
+				</field>
+			</fields>
+		</class>
+		<class fqn="org.devocative.devolcano.test.entity.Person">
+			<info/>
+			<id ref="id"/>
+			<fields>
+				<field name="id">
+					<info/>
+				</field>
+				<field name="name">
+					<info/>
+				</field>
+				<field name="birthDate">
+					<info/>
+				</field>
+			</fields>
+		</class>
+	</classes>
+</meta>

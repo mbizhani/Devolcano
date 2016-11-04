@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+		<!ELEMENT plan (packageMap|volcanoes)>
+		<!ELEMENT packageMap (from)+>
+		<!ELEMENT from (to)+>
+		<!ATTLIST from
+				pkg CDATA #REQUIRED
+				includePattern CDATA
+				excludePattern CDATA
+				ignore (true|false)
+				includeSubPackages (true|false) >
+		<!ELEMENT to (#PCDATA)>
+		<!ATTLIST to
+				pkgReplace CDATA #REQUIRED
+				generatorRef CDATA #REQUIRED
+				genDir CDATA #REQUIRED
+				ignore (true|false)>
+		<!ELEMENT volcanoes (volcano)+>
+		<!ELEMENT volcano (precondition|template)>
+		<!ATTLIST volcano
+				name CDATA #REQUIRED>
+		<!ELEMENT precondition (#PCDATA)>
+		<!ELEMENT template (overwriteCheckString)?>
+		<!ATTLIST template
+				file CDATA #REQUIRED
+				genFileType CDATA #REQUIRED
+				overwrite (check|force)
+				prefix CDATA
+				suffix CDATA>
+		<!ELEMENT overwriteCheckString (#PCDATA)>

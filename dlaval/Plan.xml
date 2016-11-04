@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE plan PUBLIC
+		"Plan"
+		"http://www.devocative.org/dtd/devolcano-plan.dtd">
+
+<plan>
+	<packageMap>
+		<!-- includePattern="in" excludePattern="ex" -->
+		<from pkg="org.devocative.devolcano.test.entity" includeSubPackages="false">
+			<to pkgReplace="entity:vo" generatorRef="LVO" genDir="src/test/java"/>
+			<!--<to pkgReplace="temp" generatorRef="LVO" genDir="src" />-->
+		</from>
+	</packageMap>
+
+	<volcanoes>
+		<volcano name="LVO">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+
+			<template file="/templates/Test.gsp"
+					  prefix="Oops" suffix="LVO"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+	</volcanoes>
+
+</plan>
