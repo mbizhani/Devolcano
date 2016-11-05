@@ -6,14 +6,27 @@
 
 <plan>
 	<packageMap>
-		<!-- includePattern="in" excludePattern="ex" -->
 		<from pkg="org.devocative.devolcano.test.entity" includeSubPackages="false">
-			<to pkgReplace="entity:vo" generatorRef="LVO" genDir="src/test/java"/>
-			<!--<to pkgReplace="temp" generatorRef="LVO" genDir="src" />-->
+			<!--<to pkgReplace="entity:vo" generatorRef="LVO" genDir="src/test/java"/>-->
+			<to pkgReplace="entity:vo" generatorRef="SVO" genDir="src/test/java"/>
 		</from>
 	</packageMap>
 
 	<volcanoes>
+		<volcano name="SVO">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/SVO.gsp"
+					  suffix="SVO"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+
 		<volcano name="LVO">
 			<precondition>
 				<![CDATA[

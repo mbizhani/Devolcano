@@ -1,5 +1,8 @@
 package org.devocative.devolcano.vo;
 
+import org.devocative.devolcano.xml.metadata.XMetaField;
+import org.devocative.devolcano.xml.metadata.XMetaInfoField;
+
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -8,6 +11,7 @@ import java.lang.reflect.ParameterizedType;
 public class FieldVO {
 	private Field field;
 	private ClassVO owner;
+	private XMetaField xMetaField;
 
 	// ------------------------------
 
@@ -48,6 +52,38 @@ public class FieldVO {
 
 	public boolean isOf(Class<?> cls) {
 		return cls.isAssignableFrom(field.getType());
+	}
+
+	public XMetaInfoField getInfo() {
+		if (xMetaField == null) {
+			xMetaField = owner.getXMetaClass().findXMetaField(getName());
+		}
+		return xMetaField.getInfo();
+	}
+
+	// ---------------- CG4F Annot Helper Methods ----------------
+
+	public boolean isOk() {
+		return !isId() && (getInfo() == null || !getInfo().getIgnore());
+	}
+
+	public boolean getHasForm() {
+		return owner.getHasForm() && (getInfo() == null || getInfo().getHasForm());
+	}
+
+	public boolean getHasList() {
+		return owner.getHasList() && (getInfo() == null || getInfo().getHasList());
+	}
+
+	public boolean getHasSVO() {
+		return owner.getHasSVO() && (getInfo() == null || getInfo().getHasSVO());
+	}
+
+	public String getListType() {
+		if (!isAssociation()) {
+			throw new RuntimeException(String.format("Defining ListType for field [%s] which is not association!", getName()));
+		}
+		return getInfo() != null ? getInfo().getListType() : "simple";
 	}
 
 	// ----------------- Hibernate/JPA Helper Methods -----------------

@@ -10,6 +10,7 @@
 				ignore (true|false)
 				hasForm (true|false)
 				hasList (true|false)
+				hasSVO (true|false)
 				>
 		<!ELEMENT id (#PCDATA)>
 		<!ATTLIST id
@@ -23,4 +24,6 @@
 				ignore (true|false)
 				hasForm (true|false)
 				hasList (true|false)
+				hasSVO (true|false)
+				listType (simple|search)
 				>

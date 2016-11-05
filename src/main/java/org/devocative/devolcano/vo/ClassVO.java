@@ -11,7 +11,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ClassVO {
 	private Class cls;
@@ -67,7 +70,7 @@ public class ClassVO {
 
 	public Map<String, FieldVO> getAllFieldsMap() {
 		if (allFieldsMap == null) {
-			allFieldsMap = new HashMap<>();
+			allFieldsMap = new LinkedHashMap<>();
 			allFieldsMap.putAll(getSupperFieldsMap());
 			allFieldsMap.putAll(getDeclaredFieldsMap());
 		}
@@ -151,11 +154,14 @@ public class ClassVO {
 	}
 
 	public XMetaInfoClass getInfo() {
+		return getXMetaClass().getInfo();
+	}
+
+	public XMetaClass getXMetaClass() {
 		if (xMetaClass == null) {
 			xMetaClass = MetaHandler.findXMetaClass(cls.getName());
 		}
-
-		return xMetaClass.getInfo();
+		return xMetaClass;
 	}
 
 	// ---------------- XMetaInfoClass Helper Methods ----------------
@@ -164,13 +170,18 @@ public class ClassVO {
 		return getInfo() == null || !getInfo().getIgnore();
 	}
 
-	public boolean hasForm() {
+	public boolean getHasForm() {
 		return isOk() && (getInfo() == null || getInfo().getHasForm());
 	}
 
-	/*public boolean hasList() {
-		return isOk() && (getInfo() == null || (getInfo().getHasList() && getInfo().hasSVO()));
-	}*/
+	public boolean getHasList() {
+		return isOk() && (getInfo() == null || (getInfo().getHasList() && getInfo().getHasSVO()));
+	}
+
+	public boolean getHasSVO() {
+		return isOk() && (getInfo() == null || getInfo().getHasSVO());
+	}
+
 
 	/*public boolean hasView() {
 		return isOk() && (cg == null || cg.hasView());

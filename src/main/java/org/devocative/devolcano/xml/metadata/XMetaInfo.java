@@ -14,6 +14,9 @@ public abstract class XMetaInfo implements Serializable {
 	@XStreamAsAttribute
 	private Boolean hasList;
 
+	@XStreamAsAttribute
+	private Boolean hasSVO;
+
 	// ------------------------------
 
 	public Boolean getIgnore() {
@@ -38,5 +41,13 @@ public abstract class XMetaInfo implements Serializable {
 
 	public void setHasList(Boolean hasList) {
 		this.hasList = hasList;
+	}
+
+	public Boolean getHasSVO() {
+		return hasSVO != null ? hasSVO : true;
+	}
+
+	public void setHasSVO(Boolean hasSVO) {
+		this.hasSVO = hasSVO;
 	}
 }

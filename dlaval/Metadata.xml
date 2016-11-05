@@ -28,6 +28,24 @@
 				<field name="birthDate">
 					<finfo/>
 				</field>
+				<field name="books">
+					<finfo/>
+				</field>
+			</fields>
+		</class>
+		<class fqn="org.devocative.devolcano.test.entity.Book">
+			<cinfo/>
+			<id ref="id"/>
+			<fields>
+				<field name="id">
+					<finfo/>
+				</field>
+				<field name="name">
+					<finfo/>
+				</field>
+				<field name="author">
+					<finfo/>
+				</field>
 			</fields>
 		</class>
 	</classes>
