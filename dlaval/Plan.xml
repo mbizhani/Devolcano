@@ -9,6 +9,8 @@
 		<from pkg="org.devocative.devolcano.test.entity" includeSubPackages="false">
 			<!--<to pkgReplace="entity:vo" generatorRef="LVO" genDir="src/test/java"/>-->
 			<to pkgReplace="entity:vo" generatorRef="SVO" genDir="src/test/java"/>
+			<to pkgReplace="entity:iservice" generatorRef="ServiceI" genDir="src/test/java"/>
+			<to pkgReplace="entity:service" generatorRef="ServiceM" genDir="src/test/java"/>
 		</from>
 	</packageMap>
 
@@ -26,6 +28,36 @@
 				<overwriteCheckString>//overwrite</overwriteCheckString>
 			</template>
 		</volcano>
+
+		<volcano name="ServiceI">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/ServiceInterface.gsp"
+					  prefix="I"
+					  suffix="Service"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+
+		<volcano name="ServiceM">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/ServiceMain.gsp"
+					  suffix="Service"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+
 
 		<volcano name="LVO">
 			<precondition>

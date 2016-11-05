@@ -146,7 +146,7 @@ public class ClassVO {
 	}
 
 	public FieldVO getIdField() {
-		for (FieldVO fieldVO : getSupperFieldsMap().values()) {
+		for (FieldVO fieldVO : getAllFieldsMap().values()) {
 			if (fieldVO.isId())
 				return fieldVO;
 		}
