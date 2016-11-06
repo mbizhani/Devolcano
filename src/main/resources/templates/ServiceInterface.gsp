@@ -3,10 +3,10 @@
     org.devocative.devolcano.ImportHelper imp = importHelper
     org.devocative.devolcano.ContextVO context = context
 
-    org.devocative.devolcano.GenTargetVO svo = context.getGenTarget(cls, "SVO")
+    org.devocative.devolcano.GenTargetVO fvo = context.getGenTarget(cls, "FVO")
 
-    if (svo != null) {
-        imp.add(svo)
+    if (fvo != null) {
+        imp.add(fvo)
     }
     imp.add(cls)
     imp.add(List.class)
@@ -21,10 +21,10 @@ public interface ${targetVO.name} {
 ${cls.simpleName} load(${imp.add(cls.idField.type)} ${cls.idField.name});
 
 	List<${cls.simpleName}> list();
-<% if (svo != null) { %>
-List<${cls.simpleName}> search(${svo.name} filter, long pageIndex, long pageSize);
+<% if (fvo != null) { %>
+List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize);
 
-	long count(${svo.name} filter);
+	long count(${fvo.name} filter);
 <% }
 cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
     if (field.ok && field.association && (field.hasSVO || field.hasForm)) {

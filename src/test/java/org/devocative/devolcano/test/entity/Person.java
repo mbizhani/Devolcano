@@ -19,6 +19,9 @@ public class Person implements Serializable {
 	@Column
 	private Date birthDate;
 
+	@Column
+	private Double weight;
+
 	@ManyToMany
 	private List<Book> books;
 
@@ -46,6 +49,14 @@ public class Person implements Serializable {
 
 	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
+	}
+
+	public Double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Double weight) {
+		this.weight = weight;
 	}
 
 	public List<Book> getBooks() {

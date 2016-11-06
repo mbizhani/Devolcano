@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
 
 public class FieldVO {
 	private Field field;
@@ -52,6 +53,10 @@ public class FieldVO {
 
 	public boolean isOf(Class<?> cls) {
 		return cls.isAssignableFrom(field.getType());
+	}
+
+	public boolean isReal() {
+		return isOf(Float.class) || isOf(Double.class) || isOf(BigDecimal.class);
 	}
 
 	public XMetaInfoField getInfo() {

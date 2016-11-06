@@ -8,21 +8,25 @@
 	<packageMap>
 		<from pkg="org.devocative.devolcano.test.entity" includeSubPackages="false">
 			<!--<to pkgReplace="entity:vo" generatorRef="LVO" genDir="src/test/java"/>-->
-			<to pkgReplace="entity:vo" generatorRef="SVO" genDir="src/test/java"/>
+			<to pkgReplace="entity:vo" generatorRef="FVO" genDir="src/test/java"/>
+
 			<to pkgReplace="entity:iservice" generatorRef="ServiceI" genDir="src/test/java"/>
 			<to pkgReplace="entity:service" generatorRef="ServiceM" genDir="src/test/java"/>
+
+			<to pkgReplace="entity:web" generatorRef="ListH" genDir="src/test/java"/>
+			<to pkgReplace="entity:web" generatorRef="ListJ" genDir="src/test/java"/>
 		</from>
 	</packageMap>
 
 	<volcanoes>
-		<volcano name="SVO">
+		<volcano name="FVO">
 			<precondition>
 				<![CDATA[
 				targetClass.normal && targetClass.ok
 				]]>
 			</precondition>
-			<template file="/templates/SVO.gsp"
-					  suffix="SVO"
+			<template file="/templates/FVO.gsp"
+					  suffix="FVO"
 					  genFileType="java"
 					  overwrite="check">
 				<overwriteCheckString>//overwrite</overwriteCheckString>
@@ -52,6 +56,34 @@
 			</precondition>
 			<template file="/templates/ServiceMain.gsp"
 					  suffix="Service"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+
+		<volcano name="ListH">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/ListH.gsp"
+					  suffix="ListDPage"
+					  genFileType="html"
+					  overwrite="check">
+				<overwriteCheckString><![CDATA[<!--overwrite-->]]></overwriteCheckString>
+			</template>
+		</volcano>
+
+		<volcano name="ListJ">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/ListJ.gsp"
+					  suffix="ListDPage"
 					  genFileType="java"
 					  overwrite="check">
 				<overwriteCheckString>//overwrite</overwriteCheckString>

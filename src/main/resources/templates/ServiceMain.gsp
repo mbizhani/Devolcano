@@ -3,11 +3,11 @@
     org.devocative.devolcano.ImportHelper imp = importHelper
     org.devocative.devolcano.ContextVO context = context
 
-    org.devocative.devolcano.GenTargetVO svo = context.getGenTarget(cls, "SVO")
+	org.devocative.devolcano.GenTargetVO fvo = context.getGenTarget(cls, "FVO")
     org.devocative.devolcano.GenTargetVO iservice = context.getGenTarget(cls, "ServiceI")
 
-    if (svo != null) {
-        imp.add(svo)
+	if (fvo != null) {
+		imp.add(fvo)
     }
     imp.add(cls)
     imp.add(List.class)
@@ -44,9 +44,9 @@ public class ${targetVO.name} implements ${iservice.name} {
 	public List<${cls.simpleName}> list() {
 		return persistorService.list(${cls.simpleName}.class);
 	}
-<% if (svo != null) { %>
+<% if (fvo != null) { %>
 @Override
-public List<${cls.simpleName}> search(${svo.name} filter, long pageIndex, long pageSize) {
+public List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize) {
 		return persistorService
 			.createQueryBuilder()
 			.addSelect("select ent")
@@ -56,7 +56,7 @@ public List<${cls.simpleName}> search(${svo.name} filter, long pageIndex, long p
 	}
 
 	@Override
-	public long count(${svo.name} filter) {
+	public long count(${fvo.name} filter) {
 		return persistorService
 			.createQueryBuilder()
 			.addSelect("select count(1)")

@@ -31,6 +31,9 @@
 				<field name="books">
 					<finfo/>
 				</field>
+				<field name="weight">
+					<finfo/>
+				</field>
 			</fields>
 		</class>
 		<class fqn="org.devocative.devolcano.test.entity.Book">
@@ -44,6 +47,9 @@
 					<finfo/>
 				</field>
 				<field name="author">
+					<finfo/>
+				</field>
+				<field name="publishYear">
 					<finfo/>
 				</field>
 			</fields>

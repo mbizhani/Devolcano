@@ -12,6 +12,9 @@ public class Book implements Serializable {
 	@Column
 	private String name;
 
+	@Column
+	private Integer publishYear;
+
 	@ManyToOne
 	private Person author;
 
@@ -31,6 +34,14 @@ public class Book implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getPublishYear() {
+		return publishYear;
+	}
+
+	public void setPublishYear(Integer publishYear) {
+		this.publishYear = publishYear;
 	}
 
 	public Person getAuthor() {
