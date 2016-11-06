@@ -1,0 +1,104 @@
+<%
+	org.devocative.devolcano.vo.ClassVO cls = targetClass
+	org.devocative.devolcano.ImportHelper imp = importHelper
+	org.devocative.devolcano.ContextVO context = context
+
+	org.devocative.devolcano.GenTargetVO iservice = context.getGenTarget(cls, "ServiceI")
+	org.devocative.devolcano.GenTargetVO service = context.getGenTarget(cls, "ServiceM")
+
+	imp.add(cls)
+	imp.add(iservice)
+	imp.add(List)
+	imp.add(Collections)
+
+	imp.add(javax.inject.Inject)
+
+	imp.add(org.devocative.demeter.web.DPage)
+	imp.add(org.devocative.wickomp.html.WFloatTable)
+	imp.add(org.devocative.demeter.web.component.DAjaxButton)
+
+	imp.add(org.apache.wicket.markup.html.form.Form)
+	imp.add(org.apache.wicket.model.CompoundPropertyModel)
+	imp.add(org.apache.wicket.model.ResourceModel)
+	imp.add(org.apache.wicket.ajax.AjaxRequestTarget)
+%>
+package ${targetVO.pkg};
+
+@IMPORT@
+
+public class ${targetVO.name} extends DPage {
+	@Inject
+	private ${iservice.name} ${service.name.toUncapital()};
+
+	private ${cls.simpleName} entity;
+
+	// ------------------------------
+
+	public ${targetVO.name}(String id) {
+		this(id, new ${cls.simpleName}());
+	}
+
+	// Main Constructor - For Ajax Call
+	public ${targetVO.name}(String id, ${cls.simpleName} entity) {
+		super(id, Collections.<String>emptyList());
+
+		this.entity = entity;
+	}
+
+	// ---------------
+
+	// Main Constructor - For REST Call
+	public ${targetVO.name}(String id, List<String> params) {
+        super(id, params);
+
+		this.entity = params != null && !params.isEmpty() ?
+			${service.name.toUncapital()}.load(Long.valueOf(params.get(0))) :
+			new ${cls.simpleName}();
+    }
+
+	// ------------------------------
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+
+        WFloatTable floatTable = new WFloatTable("floatTable");
+        floatTable.setEqualWidth(true);
+<%
+	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+		if (field.ok && field.hasSVO) {
+			String component
+
+			if (field.isOf(Number)) {
+				component = """${imp.add(org.devocative.wickomp.form.WNumberInput)}("${name}", ${imp.add(field.type)}.class)"""
+			} else if (field.isOf(Date)) {
+				component = """${imp.add(org.devocative.wickomp.form.WDateInput)}("${name}")"""
+			} else if (field.isOf(Boolean)) {
+				component = """${imp.add(org.devocative.wickomp.form.WBooleanInput)}("${name}")"""
+			} else if (field.embedded) {
+				component = """${imp.add(org.devocative.wickomp.form.WSelectionInput)}("${name}", ${imp.add(field.mainType)}.list(), false)"""
+			} else if (field.association) {
+				boolean isMultiple = field.oneToMany || field.manyToMany
+				if (field.listType == "simple") {
+					component = """${imp.add(org.devocative.wickomp.form.WSelectionInput)}("${name}", ${service.name.toUncapital()}.get${name.toCapital()}List(), ${isMultiple})"""
+				} else {
+					throw new RuntimeException("'Search' is not implemented: field = ${name}")
+				}
+			} else {
+				component = """${imp.add(org.devocative.wickomp.form.WTextInput)}("${name}")""";
+			}
+
+			out << """\t\tfloatTable.add(new ${component}.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
+		}
+	}
+%>
+		Form<${cls.simpleName}> form = new Form<${cls.simpleName}>("form", new CompoundPropertyModel<>(entity));
+        form.add(floatTable);
+        form.add(new DAjaxButton("save", new ResourceModel("label.save")) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+				${service.name.toUncapital()}.saveOrUpdate(entity);
+            }
+        });
+	}
+}

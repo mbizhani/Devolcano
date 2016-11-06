@@ -15,6 +15,9 @@
 
 			<to pkgReplace="entity:web" generatorRef="ListH" genDir="src/test/java"/>
 			<to pkgReplace="entity:web" generatorRef="ListJ" genDir="src/test/java"/>
+
+			<to pkgReplace="entity:web" generatorRef="FormH" genDir="src/test/java"/>
+			<to pkgReplace="entity:web" generatorRef="FormJ" genDir="src/test/java"/>
 		</from>
 	</packageMap>
 
@@ -89,6 +92,35 @@
 				<overwriteCheckString>//overwrite</overwriteCheckString>
 			</template>
 		</volcano>
+
+		<volcano name="FormH">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/FormH.gsp"
+					  suffix="FormDPage"
+					  genFileType="html"
+					  overwrite="check">
+				<overwriteCheckString><![CDATA[<!--overwrite-->]]></overwriteCheckString>
+			</template>
+		</volcano>
+
+		<volcano name="FormJ">
+			<precondition>
+				<![CDATA[
+				targetClass.normal && targetClass.ok
+				]]>
+			</precondition>
+			<template file="/templates/FormJ.gsp"
+					  suffix="FormDPage"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+
 
 
 		<volcano name="LVO">

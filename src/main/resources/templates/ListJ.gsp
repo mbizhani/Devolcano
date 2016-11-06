@@ -46,7 +46,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 
 	// ------------------------------
 
-	public ${targetVO.name}(String id, List<String>params) {
+	public ${targetVO.name}(String id, List<String> params) {
         super(id, params);
     }
 
