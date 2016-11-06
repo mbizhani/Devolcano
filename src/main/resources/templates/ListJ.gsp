@@ -47,17 +47,17 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	// ------------------------------
 
 	public ${targetVO.name}(String id, List<String>params) {
-super(id, params);
-}
+        super(id, params);
+    }
 
-// ------------------------------
+    // ------------------------------
 
-@Override
-protected void onInitialize() {
-super.onInitialize();
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
 
-WFloatTable floatTable = new WFloatTable("floatTable");
-floatTable.setEqualWidth(true);
+        WFloatTable floatTable = new WFloatTable("floatTable");
+        floatTable.setEqualWidth(true);
 <%
     cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
         if (field.ok && field.hasSVO) {
@@ -93,17 +93,17 @@ floatTable.setEqualWidth(true);
         }
     }
 %>
-Form<${fvo.name}> form = new Form<${fvo.name}>("form", new CompoundPropertyModel<${fvo.name}>(filter));
-form.add(floatTable);
-form.add(new DAjaxButton("search", new ResourceModel("label.search")) {
-@Override
-protected void onSubmit(AjaxRequestTarget target) {
-grid.setEnabled(true);
-grid.loadData(target);
-}
-});
+        Form<${fvo.name}> form = new Form<${fvo.name}>("form", new CompoundPropertyModel<${fvo.name}>(filter));
+        form.add(floatTable);
+        form.add(new DAjaxButton("search", new ResourceModel("label.search")) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                grid.setEnabled(true);
+                grid.loadData(target);
+            }
+        });
 
-OColumnList<${cls.simpleName}> columnList = new OColumnList<>();
+        OColumnList<${cls.simpleName}> columnList = new OColumnList<>();
 <%
     cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
         if (field.ok && field.hasList) {
@@ -127,29 +127,29 @@ OColumnList<${cls.simpleName}> columnList = new OColumnList<>();
         }
     }
 %>
-OGrid<${cls.simpleName}> oGrid = new OGrid<>();
-oGrid
-.setColumns(columnList)
-.setMultiSort(false)
-.setHeight(OSize.fixed(500))
-.setWidth(OSize.percent(100));
+        OGrid<${cls.simpleName}> oGrid = new OGrid<>();
+        oGrid
+            .setColumns(columnList)
+            .setMultiSort(false)
+            .setHeight(OSize.fixed(500))
+            .setWidth(OSize.percent(100));
 
-grid = new WDataGrid<>("grid", oGrid, this);
-grid.setEnabled(false);
-add(grid);
-}
+        grid = new WDataGrid<>("grid", oGrid, this);
+        grid.setEnabled(false);
+        add(grid);
+    }
 
-public List<${cls.simpleName}> list(long pageIndex, long pageSize, List<WSortField>sortFields) {
-return ${service.name.toUncapital()}.search(filter, pageIndex, pageSize);
-}
+    public List<${cls.simpleName}> list(long pageIndex, long pageSize, List<WSortField>sortFields) {
+        return ${service.name.toUncapital()}.search(filter, pageIndex, pageSize);
+    }
 
-@Override
-public long count() {
-return ${service.name.toUncapital()}.count(filter);
-}
+    @Override
+    public long count() {
+        return ${service.name.toUncapital()}.count(filter);
+    }
 
-@Override
-public IModel<${cls.simpleName}> model(${cls.simpleName} object) {
-return new WModel<>(object);
-}
+    @Override
+    public IModel<${cls.simpleName}> model(${cls.simpleName} object) {
+        return new WModel<>(object);
+    }
 }

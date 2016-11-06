@@ -5,13 +5,13 @@
     <form wicket:id="form">
         <div class="dmt-form">
             <div wicket:id="floatTable">
-                <%
-                    cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-                        if (field.ok && field.hasSVO) {
-                            out << """\t\t\t\t<div><div wicket:id="${name}"></div></div>\n"""
-                        }
-                    }
-                %>
+<%
+    cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+        if (field.ok && field.hasSVO) {
+            out << """\t\t\t\t<div><div wicket:id="${name}"></div></div>\n"""
+        }
+    }
+%>
             </div>
 
             <button wicket:id="search"></button>

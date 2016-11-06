@@ -45,8 +45,8 @@ public class ${targetVO.name} implements ${iservice.name} {
 		return persistorService.list(${cls.simpleName}.class);
 	}
 <% if (fvo != null) { %>
-@Override
-public List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize) {
+	@Override
+	public List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize) {
 		return persistorService
 			.createQueryBuilder()
 			.addSelect("select ent")
@@ -69,8 +69,8 @@ cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field -
     if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
         String type = imp.add(field.mainType)
 %>
-@Override
-public List<${type}> get${field.name.toCapital()}List() {
+	@Override
+	public List<${type}> get${field.name.toCapital()}List() {
 		return persistorService.list(${type}.class);
 	}
 <%

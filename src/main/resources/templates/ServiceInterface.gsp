@@ -18,11 +18,11 @@ package ${targetVO.pkg};
 public interface ${targetVO.name} {
 	void saveOrUpdate(${cls.simpleName} entity);
 
-${cls.simpleName} load(${imp.add(cls.idField.type)} ${cls.idField.name});
+    ${cls.simpleName} load(${imp.add(cls.idField.type)} ${cls.idField.name});
 
 	List<${cls.simpleName}> list();
 <% if (fvo != null) { %>
-List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize);
+    List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize);
 
 	long count(${fvo.name} filter);
 <% }
@@ -30,7 +30,7 @@ cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field -
     if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
         String type = imp.add(field.mainType)
 %>
-List<${type}> get${field.name.toCapital()}List();
+    List<${type}> get${field.name.toCapital()}List();
 <%
             }
     }
