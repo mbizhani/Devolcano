@@ -1,28 +1,28 @@
 <%
-    org.devocative.devolcano.vo.ClassVO cls = targetClass
-    org.devocative.devolcano.ImportHelper imp = importHelper
-    org.devocative.devolcano.ContextVO context = context
+	org.devocative.devolcano.vo.ClassVO cls = targetClass
+	org.devocative.devolcano.ImportHelper imp = importHelper
+	org.devocative.devolcano.ContextVO context = context
 
 	org.devocative.devolcano.GenTargetVO fvo = context.getGenTarget(cls, "FVO")
-    org.devocative.devolcano.GenTargetVO iservice = context.getGenTarget(cls, "ServiceI")
+	org.devocative.devolcano.GenTargetVO iservice = context.getGenTarget(cls, "ServiceI")
 
 	if (fvo != null) {
 		imp.add(fvo)
-    }
-    imp.add(cls)
-    imp.add(List.class)
+	}
+	imp.add(cls)
+	imp.add(List.class)
 
-    imp.add(iservice)
-    imp.add(org.devocative.demeter.iservice.persistor.IPersistorService)
-    imp.add(org.springframework.stereotype.Service)
-    imp.add(org.springframework.beans.factory.annotation.Autowired)
+	imp.add(iservice)
+	imp.add(org.devocative.demeter.iservice.persistor.IPersistorService)
+	imp.add(org.springframework.stereotype.Service)
+	imp.add(org.springframework.beans.factory.annotation.Autowired)
 
 %>
 package ${targetVO.pkg};
 
 @IMPORT@
 
-@Service("${targetVO.name}")
+@Service("${params["moduleShortName"]}${targetVO.name}")
 public class ${targetVO.name} implements ${iservice.name} {
 
 	@Autowired
@@ -65,16 +65,17 @@ public class ${targetVO.name} implements ${iservice.name} {
 			.object();
 	}
 <% }
-cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-    if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
-        String type = imp.add(field.mainType)
+
+	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+		if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
+			String type = imp.add(field.mainType)
 %>
 	@Override
 	public List<${type}> get${field.name.toCapital()}List() {
 		return persistorService.list(${type}.class);
 	}
 <%
-            }
-    }
+		}
+	}
 %>
 }

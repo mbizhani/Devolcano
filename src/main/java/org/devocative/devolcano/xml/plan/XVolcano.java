@@ -12,6 +12,8 @@ public class XVolcano {
 
 	private XTemplate template;
 
+	// ------------------------------
+
 	public String getName() {
 		return name;
 	}
@@ -34,5 +36,23 @@ public class XVolcano {
 
 	public void setTemplate(XTemplate template) {
 		this.template = template;
+	}
+
+	// ------------------------------
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof XVolcano)) return false;
+
+		XVolcano xVolcano = (XVolcano) o;
+
+		return !(getName() != null ? !getName().equals(xVolcano.getName()) : xVolcano.getName() != null);
+
+	}
+
+	@Override
+	public int hashCode() {
+		return getName() != null ? getName().hashCode() : 0;
 	}
 }

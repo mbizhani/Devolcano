@@ -6,9 +6,21 @@ import java.util.List;
 
 @XStreamAlias("plan")
 public class XPlan {
+	private String pre;
+
 	private List<XPackageFrom> packageMap;
 
 	private List<XVolcano> volcanoes;
+
+	// ------------------------------
+
+	public String getPre() {
+		return pre;
+	}
+
+	public void setPre(String pre) {
+		this.pre = pre;
+	}
 
 	public List<XPackageFrom> getPackageMap() {
 		return packageMap;

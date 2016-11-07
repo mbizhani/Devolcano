@@ -5,6 +5,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
 import org.devocative.devolcano.vo.ClassVO;
 import org.devocative.devolcano.xml.metadata.XMetaClass;
 import org.devocative.devolcano.xml.metadata.XMetaField;
@@ -17,20 +18,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CodeEruption {
 	private static final Logger logger = LoggerFactory.getLogger(CodeEruption.class);
-	private static final GroovyShell GROOVY_SHELL = new GroovyShell();
+
 	private static final String PLAN_FILE = "dlaval/Plan.xml";
+	private static final GroovyShell GROOVY_SHELL = new GroovyShell();
+	private static final Map<XVolcano, Template> TEMPLATE_CACHE = new HashMap<>();
+	private static SimpleTemplateEngine TEMPLATE_ENGINE;
 
 	private static XPlan X_PLAN;
 
 	private static File BASE_DIR;
 	private static ContextVO CONTEXT;
-	private static ClassLoader CLASS_LOADER;
 
 	// ------------------------------
 
@@ -51,7 +57,8 @@ public class CodeEruption {
 		BASE_DIR = file.getAbsoluteFile().getParentFile().getParentFile().getCanonicalFile();
 		logger.info("Project Base Directory: {}", BASE_DIR.getAbsolutePath());
 
-		CLASS_LOADER = Thread.currentThread().getContextClassLoader();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		TEMPLATE_ENGINE = new SimpleTemplateEngine(classLoader);
 
 		Map<XMetaClass, List<XMetaField>> changes = new HashMap<>();
 		MetaHandler.init();
@@ -137,16 +144,16 @@ public class CodeEruption {
 	}
 
 	private static void generateClass(Class cls, XPackageFrom packageFrom, XPackageTo packageTo) throws Exception {
-		XVolcano generator = CONTEXT.getGeneratorMap().get(packageTo.getGeneratorRef());
-		XTemplate template = generator.getTemplate();
+		XVolcano xVolcano = CONTEXT.getGeneratorMap().get(packageTo.getGeneratorRef());
+		XTemplate xTemplate = xVolcano.getTemplate();
 
 		ClassVO classVO = new ClassVO(cls);
 
-		Boolean preCond = checkPrecondition(generator, classVO);
+		Boolean preCond = checkPrecondition(xVolcano, classVO);
 		boolean doGenFile = false;
 
 		GenTargetVO genTarget = CONTEXT.getGenTarget(cls, packageFrom, packageTo);
-		String dest4log = genTarget.getFqnDir() + "." + template.getGenFileType();
+		String dest4log = genTarget.getFqnDir() + "." + xTemplate.getGenFileType();
 
 		if (preCond) {
 			String dest = BASE_DIR.getAbsolutePath()
@@ -155,16 +162,16 @@ public class CodeEruption {
 				+ "/"
 				+ genTarget.getFqnDir()
 				+ "."
-				+ template.getGenFileType();
+				+ xTemplate.getGenFileType();
 
 			File destFile = new File(dest);
 
-			doGenFile = !destFile.exists() || "force".equals(template.getOverwrite());
+			doGenFile = !destFile.exists() || "force".equals(xTemplate.getOverwrite());
 
-			if ("check".equals(template.getOverwrite()) && destFile.exists()) {
+			if ("check".equals(xTemplate.getOverwrite()) && destFile.exists()) {
 				BufferedReader reader = new BufferedReader(new FileReader(destFile));
 				String firstLine = reader.readLine();
-				doGenFile = firstLine.contains(template.getOverwriteCheckString());
+				doGenFile = firstLine.contains(xTemplate.getOverwriteCheckString());
 				reader.close();
 			}
 
@@ -176,39 +183,57 @@ public class CodeEruption {
 				params.put("context", CONTEXT);
 				params.put("importHelper", new ImportHelper());
 
-				URL templateURL;
-				if (template.getFile().startsWith("/"))
-					templateURL = CodeEruption.class.getResource(template.getFile());
-				else
-					templateURL = new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), template.getFile())).toURI().toURL();
+				if (!TEMPLATE_CACHE.containsKey(xVolcano)) {
+					URL templateURL;
+					if (xTemplate.getFile().startsWith("/")) {
+						templateURL = CodeEruption.class.getResource(xTemplate.getFile());
+					} else {
+						templateURL = new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), xTemplate.getFile())).toURI().toURL();
+					}
 
-				SimpleTemplateEngine ste = new SimpleTemplateEngine(CLASS_LOADER);
-				groovy.text.Template gTemplate = ste.createTemplate(templateURL);
+					StringBuilder builder = new StringBuilder();
+
+					if(X_PLAN.getPre() != null) {
+						builder
+							.append("<%\n")
+							.append(X_PLAN.getPre())
+							.append("\n%>\n");
+					}
+					byte[] bytes = Files.readAllBytes(Paths.get(templateURL.toURI()));
+					builder.append(new String(bytes));
+
+					TEMPLATE_CACHE.put(xVolcano, TEMPLATE_ENGINE.createTemplate(builder.toString()));
+				}
+
+				Template gTemplate = TEMPLATE_CACHE.get(xVolcano);
 				String genContent = gTemplate.make(params).toString();
 
 				ImportHelper importHelper = (ImportHelper) params.get("importHelper");
 				String importsStr = importHelper.generateImports(genTarget.getPkg()).trim();
 
-				if (!importsStr.equals(""))
+				if (!importsStr.equals("")) {
 					genContent = genContent.replace("@IMPORT@", importsStr);
-				else
+				} else {
 					genContent = genContent.replace("\n@IMPORT@\n", "");
+				}
 
 				destFile.getParentFile().mkdirs();
 				FileWriter writer = new FileWriter(destFile, false);
-				if ("check".equals(template.getOverwrite()))
-					writer.append(template.getOverwriteCheckString()).append("\n");
+				if ("check".equals(xTemplate.getOverwrite())) {
+					writer.append(xTemplate.getOverwriteCheckString()).append("\n");
+				}
 				writer.write(genContent.trim());
 				writer.close();
 				//logger.info("++++++++Generated: [{}]", destFile.getCanonicalPath());
 			}
 		}
 		logger.info("\t[{}] (pre:{}, gen:{})", packageTo.getGeneratorRef(), preCond, doGenFile);
-		if (doGenFile)
+		if (doGenFile) {
 			logger.info("\t+ {}", dest4log);
-		else if (preCond)
+		} else if (preCond) {
 			logger.info("\t! {}", dest4log);
-		else
+		} else {
 			logger.info("\t- {}", dest4log);
+		}
 	}
 }

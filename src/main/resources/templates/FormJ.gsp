@@ -5,9 +5,12 @@
 
 	org.devocative.devolcano.GenTargetVO iservice = context.getGenTarget(cls, "ServiceI")
 	org.devocative.devolcano.GenTargetVO service = context.getGenTarget(cls, "ServiceM")
+	org.devocative.devolcano.GenTargetVO listJ = context.getGenTarget(cls, "ListJ")
 
 	imp.add(cls)
 	imp.add(iservice)
+	imp.add(listJ)
+
 	imp.add(List)
 	imp.add(Collections)
 
@@ -16,11 +19,13 @@
 	imp.add(org.devocative.demeter.web.DPage)
 	imp.add(org.devocative.wickomp.html.WFloatTable)
 	imp.add(org.devocative.demeter.web.component.DAjaxButton)
+	imp.add(org.devocative.demeter.web.UrlUtil)
 
 	imp.add(org.apache.wicket.markup.html.form.Form)
 	imp.add(org.apache.wicket.model.CompoundPropertyModel)
 	imp.add(org.apache.wicket.model.ResourceModel)
 	imp.add(org.apache.wicket.ajax.AjaxRequestTarget)
+	imp.add(org.devocative.wickomp.html.window.WModalWindow)
 %>
 package ${targetVO.pkg};
 
@@ -49,21 +54,21 @@ public class ${targetVO.name} extends DPage {
 
 	// Main Constructor - For REST Call
 	public ${targetVO.name}(String id, List<String> params) {
-        super(id, params);
+		super(id, params);
 
 		this.entity = params != null && !params.isEmpty() ?
 			${service.name.toUncapital()}.load(Long.valueOf(params.get(0))) :
 			new ${cls.simpleName}();
-    }
+	}
 
 	// ------------------------------
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
 
-        WFloatTable floatTable = new WFloatTable("floatTable");
-        floatTable.setEqualWidth(true);
+		WFloatTable floatTable = new WFloatTable("floatTable");
+		floatTable.setEqualWidth(true);
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
 		if (field.ok && field.hasSVO) {
@@ -92,13 +97,17 @@ public class ${targetVO.name} extends DPage {
 		}
 	}
 %>
-		Form<${cls.simpleName}> form = new Form<${cls.simpleName}>("form", new CompoundPropertyModel<>(entity));
-        form.add(floatTable);
-        form.add(new DAjaxButton("save", new ResourceModel("label.save")) {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target) {
+		Form<${cls.simpleName}> form = new Form<>("form", new CompoundPropertyModel<>(entity));
+		form.add(floatTable);
+		form.add(new DAjaxButton("save", new ResourceModel("label.save")) {
+			@Override
+			protected void onSubmit(AjaxRequestTarget target) {
 				${service.name.toUncapital()}.saveOrUpdate(entity);
-            }
-        });
+
+				if (!WModalWindow.closeParentWindow(${targetVO.name}.this, target)) {
+					UrlUtil.redirectTo(${listJ.name}.class);
+				}
+			}
+		});
 	}
 }
