@@ -28,7 +28,7 @@ import java.util.Map;
 public class CodeEruption {
 	private static final Logger logger = LoggerFactory.getLogger(CodeEruption.class);
 
-	private static final String PLAN_FILE = "dlaval/Plan.xml";
+	private static final String PLAN_FILE = "dlava/Plan.xml";
 	private static final GroovyShell GROOVY_SHELL = new GroovyShell();
 	private static final Map<XVolcano, Template> TEMPLATE_CACHE = new HashMap<>();
 	private static SimpleTemplateEngine TEMPLATE_ENGINE;

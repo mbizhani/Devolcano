@@ -15,7 +15,7 @@ import java.util.*;
 
 public class MetaHandler {
 	private static final Logger logger = LoggerFactory.getLogger(MetaHandler.class);
-	private static final String META_FILE = "dlaval/Metadata.xml";
+	private static final String META_FILE = "dlava/Metadata.xml";
 	private static XMeta X_META;
 
 	private static ClassLoader CLASS_LOADER;
