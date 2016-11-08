@@ -8,7 +8,7 @@
 	<pre>
 		<![CDATA[
 			def params = [
-				moduleShortName : "mts",
+				moduleShortName : "MTS".toLowerCase(),
 				ajaxEditColumn : false,
 				iconClass : org.devocative.demeter.web.DemeterIcon
 			]
@@ -23,11 +23,11 @@
 			<to pkgReplace="entity:iservice" generatorRef="ServiceI" genDir="src/test/java"/>
 			<to pkgReplace="entity:service" generatorRef="ServiceM" genDir="src/test/java"/>
 
-			<to pkgReplace="entity:web" generatorRef="ListH" genDir="src/test/java"/>
-			<to pkgReplace="entity:web" generatorRef="ListJ" genDir="src/test/java"/>
+			<to pkgReplace="entity:web.dpage" generatorRef="ListH" genDir="src/test/java"/>
+			<to pkgReplace="entity:web.dpage" generatorRef="ListJ" genDir="src/test/java"/>
 
-			<to pkgReplace="entity:web" generatorRef="FormH" genDir="src/test/java"/>
-			<to pkgReplace="entity:web" generatorRef="FormJ" genDir="src/test/java"/>
+			<to pkgReplace="entity:web.dpage" generatorRef="FormH" genDir="src/test/java"/>
+			<to pkgReplace="entity:web.dpage" generatorRef="FormJ" genDir="src/test/java"/>
 		</from>
 	</packageMap>
 
