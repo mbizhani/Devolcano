@@ -8,6 +8,8 @@ package ${targetVO.pkg};
 
 @${imp.add(org.devocative.demeter.iservice.persistor.Filterer)}
 public class ${targetVO.name} implements ${imp.add(Serializable)} {
+	private static final long serialVersionUID = ${targetVO.fqn.hashCode()}L;
+
 <%
     StringBuilder setterGetterBuilder = new StringBuilder()
 

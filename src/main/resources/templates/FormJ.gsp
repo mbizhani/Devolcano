@@ -32,6 +32,8 @@ package ${targetVO.pkg};
 @IMPORT@
 
 public class ${targetVO.name} extends DPage {
+	private static final long serialVersionUID = ${targetVO.fqn.hashCode()}L;
+
 	@Inject
 	private ${iservice.name} ${service.name.toUncapital()};
 
@@ -100,6 +102,8 @@ public class ${targetVO.name} extends DPage {
 		Form<${cls.simpleName}> form = new Form<>("form", new CompoundPropertyModel<>(entity));
 		form.add(floatTable);
 		form.add(new DAjaxButton("save", new ResourceModel("label.save")) {
+			private static final long serialVersionUID = ${(targetVO.fqn + ".DAjaxButton").hashCode()}L;
+
 			@Override
 			protected void onSubmit(AjaxRequestTarget target) {
 				${service.name.toUncapital()}.saveOrUpdate(entity);

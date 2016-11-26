@@ -8,6 +8,8 @@
 	org.devocative.devolcano.GenTargetVO service = context.getGenTarget(cls, "ServiceM")
 	org.devocative.devolcano.GenTargetVO formJ = context.getGenTarget(cls, "FormJ")
 
+	List commonFields = ["creationDate", "creatorUser", "modificationDate", "modifierUser", "version"]
+
 	imp.add(cls)
 	imp.add(fvo)
 	imp.add(iservice)
@@ -28,7 +30,6 @@
 	imp.add(org.devocative.wickomp.WModel)
 	imp.add(org.devocative.wickomp.opt.OSize)
 	imp.add(org.devocative.wickomp.grid.WSortField)
-	imp.add(org.devocative.wickomp.html.window.WModalWindow)
 
 	imp.add(org.apache.wicket.markup.html.form.Form)
 	imp.add(org.apache.wicket.model.CompoundPropertyModel)
@@ -42,12 +43,13 @@ package ${targetVO.pkg};
 @IMPORT@
 
 public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.simpleName}> {
+	private static final long serialVersionUID = ${targetVO.fqn.hashCode()}L;
+
 	@Inject
 	private ${iservice.name} ${service.name.toUncapital()};
 
 	private ${fvo.name} filter = new ${fvo.name}();
 	private WDataGrid<${cls.simpleName}> grid;
-	private WModalWindow window;
 
 	// ------------------------------
 
@@ -60,10 +62,11 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-
-		window = new WModalWindow("window");
+<% 	if(params["ajaxEditColumn"]) { %>
+		final ${imp.add(org.devocative.wickomp.html.window.WModalWindow)} window = new WModalWindow("window");
+		window.getOptions().setHeight(OSize.percent(80)).setWidth(OSize.percent(80));
 		add(window);
-
+<% } %>
 		WFloatTable floatTable = new WFloatTable("floatTable");
 		floatTable.setEqualWidth(true);
 <%
@@ -89,21 +92,22 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				component = """${imp.add(org.devocative.wickomp.form.WTextInput)}("${name}")""";
 			}
 
-			out << """\t\tfloatTable.add(new ${component}.setLabel(new ResourceModel("${cls.simpleName}.${
-				name
-			}")));\n"""
+			out << """\t\tfloatTable.add(new ${component}.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}")));\n"""
 		}
 	}
 %>
 		Form<${fvo.name}> form = new Form<>("form", new CompoundPropertyModel<>(filter));
 		form.add(floatTable);
 		form.add(new DAjaxButton("search", new ResourceModel("label.search")) {
+			private static final long serialVersionUID = ${(targetVO.fqn + ".DAjaxButton").hashCode()}L;
+
 			@Override
 			protected void onSubmit(AjaxRequestTarget target) {
 				grid.setEnabled(true);
 				grid.loadData(target);
 			}
 		});
+		add(form);
 
 		OColumnList<${cls.simpleName}> columnList = new OColumnList<>();
 <%
@@ -123,13 +127,15 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				}
 			}
 
-			out << """\t\tcolumnList.add(new OPropertyColumn<${cls.simpleName}>(new ResourceModel("${cls.simpleName}.${name}"), "${name}")${cellFormatter});\n"""
+			out << """\t\tcolumnList.add(new OPropertyColumn<${cls.simpleName}>(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}"), "${name}")${cellFormatter});\n"""
 		}
 	}
 
 	if(params["ajaxEditColumn"]) {
 %>
 		columnList.add(new ${imp.add(org.devocative.wickomp.grid.column.link.OAjaxLinkColumn)}<${cls.simpleName}>(new Model<String>(), ${imp.add(params["iconClass"])}.EDIT) {
+			private static final long serialVersionUID = ${(targetVO.fqn + ".OAjaxLinkColumn").hashCode()}L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target, IModel<${cls.simpleName}> rowData) {
 				window.setContent(new ${formJ.name}(window.getContentId(), rowData.getObject()));

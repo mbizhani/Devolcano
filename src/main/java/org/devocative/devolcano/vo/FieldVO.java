@@ -6,6 +6,7 @@ import org.devocative.devolcano.xml.metadata.XMetaInfoField;
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 
@@ -59,6 +60,10 @@ public class FieldVO {
 		return isOf(Float.class) || isOf(Double.class) || isOf(BigDecimal.class);
 	}
 
+	public boolean isStatic() {
+		return Modifier.isStatic(field.getModifiers());
+	}
+
 	public XMetaInfoField getInfo() {
 		if (xMetaField == null) {
 			xMetaField = owner.getXMetaClass().findXMetaField(getName());
@@ -69,7 +74,7 @@ public class FieldVO {
 	// ---------------- CG4F Annot Helper Methods ----------------
 
 	public boolean isOk() {
-		return !isId() && (getInfo() == null || !getInfo().getIgnore());
+		return !isId() && !isStatic() && (getInfo() == null || !getInfo().getIgnore());
 	}
 
 	public boolean getHasForm() {

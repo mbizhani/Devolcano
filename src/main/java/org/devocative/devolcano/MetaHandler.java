@@ -16,6 +16,10 @@ import java.util.*;
 public class MetaHandler {
 	private static final Logger logger = LoggerFactory.getLogger(MetaHandler.class);
 	private static final String META_FILE_STR = "/dlava/Metadata.xml";
+
+	//TODO find a better way!
+	private static final List<String> IGNORED_FIELDS = Arrays.asList("creatorUserId", "modifierUserId", "version");
+
 	private static File META_FILE;
 	private static XMeta X_META;
 
@@ -156,6 +160,11 @@ public class MetaHandler {
 			if (xMetaField == null) {
 				xMetaField = new XMetaField();
 				xMetaField.setName(fieldVO.getName());
+				if (IGNORED_FIELDS.contains(fieldVO.getName()) || fieldVO.isStatic()) {
+					xMetaField.setInfo(new XMetaInfoField());
+					xMetaField.getInfo().setIgnore(true);
+				}
+
 				xMetaClass.getFields().add(xMetaField);
 				result.add(xMetaField);
 			}
