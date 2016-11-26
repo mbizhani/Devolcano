@@ -15,19 +15,22 @@ import java.util.*;
 
 public class MetaHandler {
 	private static final Logger logger = LoggerFactory.getLogger(MetaHandler.class);
-	private static final String META_FILE = "dlava/Metadata.xml";
+	private static final String META_FILE_STR = "/dlava/Metadata.xml";
+	private static File META_FILE;
 	private static XMeta X_META;
 
 	private static ClassLoader CLASS_LOADER;
 
-	public static void init() {
-		File file = new File(META_FILE);
+	public static void init(String baseDir) {
+		logger.info("MetaHandler: Base Dir = {}", baseDir);
 
-		if (file.exists()) {
-			logger.info("Metadata file: {}", file.getAbsolutePath());
+		META_FILE = new File(baseDir + META_FILE_STR);
+
+		if (META_FILE.exists()) {
+			logger.info("Metadata file: {}", META_FILE.getAbsolutePath());
 
 			XStream xStream = getXStream();
-			X_META = (XMeta) xStream.fromXML(file);
+			X_META = (XMeta) xStream.fromXML(META_FILE);
 		} else {
 			logger.info("Metadata file not exist!");
 
@@ -85,16 +88,15 @@ public class MetaHandler {
 	}
 
 	public static void write() {
-		File file = new File(META_FILE);
-		file.getParentFile().mkdirs();
-		logger.info("Writing to Metadata.xml: {}", file.getAbsolutePath());
+		META_FILE.getParentFile().mkdirs();
+		logger.info("Writing to Metadata.xml: {}", META_FILE.getAbsolutePath());
 
 		XStream xStream = getXStream();
 		try {
 			String xml = xStream.toXML(X_META);
 			xml = xml.replaceAll("  ", "\t");
 
-			FileWriter writer = new FileWriter(file);
+			FileWriter writer = new FileWriter(META_FILE);
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
 			writer.write("<!DOCTYPE meta PUBLIC\n");
 			writer.write("\t\t\"Meta Data\"\n");
@@ -130,14 +132,18 @@ public class MetaHandler {
 	}
 
 	public static String toCSV(Collection col) {
-		StringBuilder builder = new StringBuilder();
-		for (Object o : col) {
-			builder
-				.append(o.toString())
-				.append(",");
+		if (col.size() > 0) {
+			StringBuilder builder = new StringBuilder();
+			for (Object o : col) {
+				builder
+					.append(o.toString())
+					.append(",");
+			}
+			String s = builder.toString();
+			return s.substring(0, s.length() - 1);
 		}
-		String s = builder.toString();
-		return s.substring(0, s.length() - 1);
+
+		return "";
 	}
 
 	// ------------------------------

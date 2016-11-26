@@ -13,14 +13,7 @@ import org.devocative.devolcano.xml.plan.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +21,7 @@ import java.util.Map;
 public class CodeEruption {
 	private static final Logger logger = LoggerFactory.getLogger(CodeEruption.class);
 
-	private static final String PLAN_FILE = "dlava/Plan.xml";
+	private static final String PLAN_FILE = "/dlava/Plan.xml";
 	private static final GroovyShell GROOVY_SHELL = new GroovyShell();
 	private static final Map<XVolcano, Template> TEMPLATE_CACHE = new HashMap<>();
 	private static SimpleTemplateEngine TEMPLATE_ENGINE;
@@ -40,8 +33,20 @@ public class CodeEruption {
 
 	// ------------------------------
 
-	public static void init() throws Exception {
-		File file = new File(PLAN_FILE);
+	public static void init(File baseDir) throws Exception {
+		logger.info("Maven Base Dir: {}", baseDir.getAbsolutePath());
+
+		File file = new File(baseDir.getAbsolutePath() + PLAN_FILE);
+
+		int retry = 1;
+		while (retry < 4) {
+			if (file.exists()) {
+				break;
+			} else {
+				file = new File(baseDir.getParentFile().getAbsolutePath() + PLAN_FILE);
+				retry++;
+			}
+		}
 
 		if (!file.exists()) {
 			throw new RuntimeException("Plan file not exist: " + PLAN_FILE);
@@ -60,8 +65,8 @@ public class CodeEruption {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		TEMPLATE_ENGINE = new SimpleTemplateEngine(classLoader);
 
+		MetaHandler.init(BASE_DIR.getAbsolutePath());
 		Map<XMetaClass, List<XMetaField>> changes = new HashMap<>();
-		MetaHandler.init();
 		if (X_PLAN.getPackageMap().size() > 0) {
 			for (XPackageFrom packageFrom : X_PLAN.getPackageMap()) {
 				if (!packageFrom.getIgnore()) { //TODO check pattern!
@@ -84,7 +89,8 @@ public class CodeEruption {
 				}
 			}
 
-			throw new RuntimeException("Pay Attention To Changes!");
+			logger.error("Pay Attention To Changes!");
+			System.exit(1);
 		}
 	}
 
@@ -139,8 +145,9 @@ public class CodeEruption {
 				} else
 					logger.warn("[{}] Ignored!", name);
 			}
-		} else
+		} else {
 			logger.warn("No class found in {} with sub={}", packageFrom.getPkg(), packageFrom.getIncludeSubPackages());
+		}
 	}
 
 	private static void generateClass(Class cls, XPackageFrom packageFrom, XPackageTo packageTo) throws Exception {
@@ -184,22 +191,23 @@ public class CodeEruption {
 				params.put("importHelper", new ImportHelper());
 
 				if (!TEMPLATE_CACHE.containsKey(xVolcano)) {
-					URL templateURL;
+					InputStream templateIS;
 					if (xTemplate.getFile().startsWith("/")) {
-						templateURL = CodeEruption.class.getResource(xTemplate.getFile());
+						templateIS = CodeEruption.class.getResourceAsStream(xTemplate.getFile());
 					} else {
-						templateURL = new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), xTemplate.getFile())).toURI().toURL();
+						templateIS = new FileInputStream(
+							new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), xTemplate.getFile())));
 					}
 
 					StringBuilder builder = new StringBuilder();
 
-					if(X_PLAN.getPre() != null) {
+					if (X_PLAN.getPre() != null) {
 						builder
 							.append("<%\n")
 							.append(X_PLAN.getPre())
 							.append("\n%>\n");
 					}
-					byte[] bytes = Files.readAllBytes(Paths.get(templateURL.toURI()));
+					byte[] bytes = load(templateIS);
 					builder.append(new String(bytes));
 
 					TEMPLATE_CACHE.put(xVolcano, TEMPLATE_ENGINE.createTemplate(builder.toString()));
@@ -234,6 +242,26 @@ public class CodeEruption {
 			logger.info("\t! {}", dest4log);
 		} else {
 			logger.info("\t- {}", dest4log);
+		}
+	}
+
+	private static byte[] load(InputStream in) {
+		try {
+			byte buffer[] = new byte[1024];
+			int read;
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			while ((read = in.read(buffer)) != -1) {
+				out.write(buffer, 0, read);
+			}
+			byte[] bytes = out.toByteArray();
+
+			in.close();
+			out.close();
+
+			return bytes;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

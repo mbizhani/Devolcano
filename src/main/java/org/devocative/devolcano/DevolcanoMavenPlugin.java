@@ -8,21 +8,23 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Mojo(
-	name = "generate",
-	requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+	name = "erupt",
+	requiresDependencyResolution = ResolutionScope.RUNTIME,
 	defaultPhase = LifecyclePhase.TEST
 )
 public class DevolcanoMavenPlugin extends AbstractMojo {
+	private static final Logger logger = LoggerFactory.getLogger(DevolcanoMavenPlugin.class);
 
 	@Parameter(defaultValue = "${project}", required = true, readonly = true)
 	private MavenProject project;
@@ -34,8 +36,31 @@ public class DevolcanoMavenPlugin extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		File baseDir = project.getBasedir();
+
 		try {
-			Set<URL> urls = new HashSet<>();
+			List<URL> urls = new ArrayList<>();
+
+			if (project.hasParent()) {
+				MavenProject parent = project.getParent();
+				baseDir = parent.getBasedir();
+
+				logger.info("Maven Modules: {}", parent.getModules());
+				for (String mod : parent.getModules()) {
+					File f = new File(String.format("%s/%s/target/classes/", baseDir.getAbsolutePath(), mod));
+					if (f.exists()) {
+						add(urls, f.getAbsolutePath());
+					}
+				}
+
+				logger.info("\n\nMaven Parent: {}", parent);
+				addAll(urls, parent.getRuntimeClasspathElements());
+				addAll(urls, parent.getCompileClasspathElements());
+
+				if (useTestClasspath) {
+					addAll(urls, parent.getTestClasspathElements());
+				}
+			}
 
 			addAll(urls, project.getRuntimeClasspathElements());
 			addAll(urls, project.getCompileClasspathElements());
@@ -50,19 +75,32 @@ public class DevolcanoMavenPlugin extends AbstractMojo {
 
 			Thread.currentThread().setContextClassLoader(contextClassLoader);
 
-			CodeEruption.init();
+			CodeEruption.init(baseDir);
 			CodeEruption.erupt();
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new MojoExecutionException("Generation", e);
 		}
 	}
 
 	// ------------------------------
 
-	private void addAll(Set<URL> urls, List<String> elements) throws MalformedURLException {
+	private void addAll(List<URL> urls, List<String> elements) throws MalformedURLException {
+		logger.info("ClassLoader: {}", elements);
+
 		for (String element : elements) {
-			urls.add(new File(element).toURI().toURL());
+			URL url = new File(element).toURI().toURL();
+			if (!urls.contains(url)) {
+				urls.add(url);
+			}
+		}
+	}
+
+	private void add(List<URL> urls, String element) throws MalformedURLException {
+		logger.info("ClassLoader: {}", element);
+
+		URL url = new File(element).toURI().toURL();
+		if (!urls.contains(url)) {
+			urls.add(url);
 		}
 	}
 }
