@@ -35,6 +35,9 @@ public class XMetaField implements Serializable {
 	}
 
 	public XMetaInfoField getInfo() {
+		if(info == null) {
+			info = new XMetaInfoField();
+		}
 		return info;
 	}
 

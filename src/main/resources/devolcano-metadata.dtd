@@ -26,4 +26,5 @@
 				hasList (true|false)
 				hasSVO (true|false)
 				listType (simple|search)
+				hasTimePart (true|false)
 				>

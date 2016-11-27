@@ -77,7 +77,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			if (field.isOf(Number)) {
 				component = """${imp.add(org.devocative.wickomp.form.WNumberRangeInput)}("${name}", ${imp.add(field.type)}.class)"""
 			} else if (field.isOf(Date)) {
-				component = """${imp.add(org.devocative.wickomp.form.WDateRangeInput)}("${name}")"""
+				component = """${imp.add(org.devocative.wickomp.form.WDateRangeInput)}("${name}")\n\t\t\t.setTimePartVisible(${field.info.hasTimePart})"""
 			} else if (field.isOf(Boolean)) {
 				component = """${imp.add(org.devocative.wickomp.form.WBooleanInput)}("${name}")"""
 			} else if (field.embedded) {
@@ -92,7 +92,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				component = """${imp.add(org.devocative.wickomp.form.WTextInput)}("${name}")""";
 			}
 
-			out << """\t\tfloatTable.add(new ${component}.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}")));\n"""
+			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}")));\n"""
 		}
 	}
 %>
@@ -116,15 +116,26 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			String cellFormatter = ""
 
 			if (field.isOf(Date)) {
-				cellFormatter = ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ODateFormatter)}.getDateTimeByUserPreference())"
-			} else if (field.isOf(Boolean)) {
-				cellFormatter = ".setFormatter(${imp.add(org.devocative.wickomp.formatter.OBooleanFormatter)}.bool())"
-			} else if (field.isOf(Number)) {
-				if (field.real) {
-					cellFormatter = ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ONumberFormatter)}.real())"
+				cellFormatter = "\n\t\t\t"
+
+				if (field.info.hasTimePart) {
+					cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ODateFormatter)}.getDateTimeByUserPreference())"
 				} else {
-					cellFormatter = ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ONumberFormatter)}.integer())"
+					cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ODateFormatter)}.getDateByUserPreference())"
 				}
+
+				cellFormatter += """\n\t\t\t.setStyle("direction:ltr")""";
+			} else if (field.isOf(Boolean)) {
+				cellFormatter = "\n\t\t\t"
+				cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.OBooleanFormatter)}.bool())"
+			} else if (field.isOf(Number)) {
+				cellFormatter = "\n\t\t\t"
+				if (field.real) {
+					cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ONumberFormatter)}.real())"
+				} else {
+					cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ONumberFormatter)}.integer())"
+				}
+				cellFormatter += """\n\t\t\t.setStyle("direction:ltr")""";
 			}
 
 			out << """\t\tcolumnList.add(new OPropertyColumn<${cls.simpleName}>(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}"), "${name}")${cellFormatter});\n"""

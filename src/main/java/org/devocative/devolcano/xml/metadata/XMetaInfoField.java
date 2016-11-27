@@ -8,6 +8,9 @@ public class XMetaInfoField extends XMetaInfo {
 	@XStreamAsAttribute
 	private String listType;
 
+	@XStreamAsAttribute
+	private Boolean hasTimePart;
+
 	// ------------------------------
 
 	public String getListType() {
@@ -16,5 +19,16 @@ public class XMetaInfoField extends XMetaInfo {
 
 	public void setListType(String listType) {
 		this.listType = listType;
+	}
+
+	public Boolean getHasTimePart() {
+		if (hasTimePart == null) {
+			hasTimePart = true;
+		}
+		return hasTimePart;
+	}
+
+	public void setHasTimePart(Boolean hasTimePart) {
+		this.hasTimePart = hasTimePart;
 	}
 }

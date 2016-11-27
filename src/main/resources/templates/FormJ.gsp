@@ -73,13 +73,13 @@ public class ${targetVO.name} extends DPage {
 		floatTable.setEqualWidth(true);
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.hasSVO) {
+		if (field.ok && field.hasForm) {
 			String component
 
 			if (field.isOf(Number)) {
 				component = """${imp.add(org.devocative.wickomp.form.WNumberInput)}("${name}", ${imp.add(field.type)}.class)"""
 			} else if (field.isOf(Date)) {
-				component = """${imp.add(org.devocative.wickomp.form.WDateInput)}("${name}")"""
+				component = """${imp.add(org.devocative.wickomp.form.WDateInput)}("${name}")\n\t\t\t.setTimePartVisible(${field.info.hasTimePart})"""
 			} else if (field.isOf(Boolean)) {
 				component = """${imp.add(org.devocative.wickomp.form.WBooleanInput)}("${name}")"""
 			} else if (field.embedded) {
@@ -95,7 +95,7 @@ public class ${targetVO.name} extends DPage {
 				component = """${imp.add(org.devocative.wickomp.form.WTextInput)}("${name}")""";
 			}
 
-			out << """\t\tfloatTable.add(new ${component}.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
+			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
 		}
 	}
 %>
@@ -113,5 +113,6 @@ public class ${targetVO.name} extends DPage {
 				}
 			}
 		});
+		add(form);
 	}
 }
