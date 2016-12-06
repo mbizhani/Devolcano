@@ -62,7 +62,7 @@ public class MetaHandler {
 
 		Map<XMetaClass, List<XMetaField>> result = new HashMap<>();
 
-		List<Class> classes = processPackage(pkg, includeSubPackages);
+		Collection<Class> classes = processPackage(pkg, includeSubPackages);
 		for (Class aClass : classes) {
 			ClassVO classVO = new ClassVO(aClass);
 
@@ -126,7 +126,7 @@ public class MetaHandler {
 		return X_META.findXMetaClass(fqn);
 	}
 
-	public static List<Class> processPackage(String packageName, Boolean includeSubPackages) {
+	public static Set<Class> processPackage(String packageName, Boolean includeSubPackages) {
 		if (X_META.getFilterClass() != null) {
 			FILTER_CLASS_CHECK = GROOVY_SHELL.parse(X_META.getFilterClass());
 		}
@@ -139,7 +139,7 @@ public class MetaHandler {
 				URL resource = resources.nextElement();
 				dirs.add(new File(resource.getFile()));
 			}
-			List<Class> classes = new ArrayList<>();
+			Set<Class> classes = new LinkedHashSet<>();
 			for (File directory : dirs) {
 				classes.addAll(findClasses(directory, packageName, includeSubPackages));
 			}
@@ -209,14 +209,15 @@ public class MetaHandler {
 		return result;
 	}
 
-	private static List<Class> findClasses(File directory, String packageName, Boolean includeSubPackages) throws ClassNotFoundException {
-		List<Class> classes = new ArrayList<Class>();
+	private static Set<Class> findClasses(File directory, String packageName, Boolean includeSubPackages) throws ClassNotFoundException {
+		Set<Class> classes = new LinkedHashSet<>();
 		if (!directory.exists()) {
 			return classes;
 		}
 
-		if (!directory.isDirectory())
+		if (!directory.isDirectory()) {
 			throw new RuntimeException(String.format("%s not a directory!", directory.getName()));
+		}
 
 		File[] files = directory.listFiles();
 		if (files != null) {

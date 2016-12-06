@@ -6,12 +6,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.devocative</groupId>
-	<artifactId>devolcano-maven-plugin</artifactId>
+	<artifactId>demeter-maven-plugin</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>A CRUD generator for a DModule</description>
+	<description>A CRUD generator for a DModule and other helper plugins</description>
 	<url>https://github.com/mbizhani/Devolcano</url>
 
 	<licenses>
@@ -110,27 +110,19 @@
 			<version>3.5</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.devocative</groupId>
+			<artifactId>demeter-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 
 		<!-- SPECIAL -->
 
 		<dependency>
 			<groupId>org.devocative</groupId>
-			<artifactId>adroit</artifactId>
-			<version>1.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.devocative</groupId>
 			<artifactId>demeter-web</artifactId>
 			<version>1.0-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>4.3.3.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -210,11 +202,8 @@
 			<!-- Test the Plugin -->
 			<plugin>
 				<groupId>org.devocative</groupId>
-				<artifactId>devolcano-maven-plugin</artifactId>
+				<artifactId>demeter-maven-plugin</artifactId>
 				<version>1.0-SNAPSHOT</version>
-				<configuration>
-					<useTestClasspath>true</useTestClasspath>
-				</configuration>
 			</plugin>
 
 		</plugins>
