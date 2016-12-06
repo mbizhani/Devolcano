@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-		<!ELEMENT meta (classes)*>
+		<!ELEMENT meta (filterClass|classes)*>
+		<!ELEMENT filterClass (#PCDATA)>
 		<!ELEMENT classes (class)*>
 		<!ELEMENT class (cinfo|id|fields)*>
 		<!ATTLIST class

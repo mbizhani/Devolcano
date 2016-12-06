@@ -5,16 +5,8 @@
 		"http://www.devocative.org/dtd/devolcano-metadata.dtd">
 
 <meta>
+	<filterClass>targetClass.entity</filterClass>
 	<classes>
-		<class fqn="">
-			<cinfo ignore="false" hasForm="false" hasList="false"/>
-			<id ref=""/>
-			<fields>
-				<field name="">
-					<finfo ignore="false" hasForm="false" hasList="false"/>
-				</field>
-			</fields>
-		</class>
 		<class fqn="org.devocative.devolcano.test.entity.Person">
 			<cinfo/>
 			<id ref="id"/>
@@ -50,6 +42,9 @@
 					<finfo/>
 				</field>
 				<field name="publishYear">
+					<finfo/>
+				</field>
+				<field name="bookType">
 					<finfo/>
 				</field>
 			</fields>

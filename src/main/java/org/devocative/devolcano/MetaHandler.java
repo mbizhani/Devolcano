@@ -1,6 +1,9 @@
 package org.devocative.devolcano;
 
 import com.thoughtworks.xstream.XStream;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import org.devocative.devolcano.vo.ClassVO;
 import org.devocative.devolcano.vo.FieldVO;
 import org.devocative.devolcano.xml.metadata.*;
@@ -28,6 +31,11 @@ public class MetaHandler {
 	private static XMeta X_META;
 
 	private static ClassLoader CLASS_LOADER;
+
+	private static final GroovyShell GROOVY_SHELL = new GroovyShell();
+	private static Script FILTER_CLASS_CHECK;
+
+	// ------------------------------
 
 	public static void init(String baseDir) {
 		logger.info("MetaHandler: Base Dir = {}", baseDir);
@@ -58,36 +66,34 @@ public class MetaHandler {
 		for (Class aClass : classes) {
 			ClassVO classVO = new ClassVO(aClass);
 
-			if (classVO.isNormal()) {
-				logger.info("\tscanning class: {}", aClass.getName());
-				XMetaClass xMetaClass = X_META.findXMetaClass(aClass.getName());
+			logger.info("\tscanning class: {}", aClass.getName());
+			XMetaClass xMetaClass = X_META.findXMetaClass(aClass.getName());
 
-				if (xMetaClass == null) {
-					xMetaClass = new XMetaClass();
-					xMetaClass.setFqn(aClass.getName());
-					xMetaClass.setFields(new ArrayList<XMetaField>());
-					X_META.getClasses().add(xMetaClass);
+			if (xMetaClass == null) {
+				xMetaClass = new XMetaClass();
+				xMetaClass.setFqn(aClass.getName());
+				xMetaClass.setFields(new ArrayList<XMetaField>());
+				X_META.getClasses().add(xMetaClass);
 
-					result.put(xMetaClass, null); // New Class Added!
-				}
-
-				if (xMetaClass.getInfo() == null) {
-					xMetaClass.setInfo(new XMetaInfoClass());
-				}
-
-				List<XMetaField> idFields = new ArrayList<>();
-				List<XMetaField> newXMetaFields = scanFields(classVO, xMetaClass, idFields);
-
-				if (!newXMetaFields.isEmpty() && !result.containsKey(xMetaClass)) {
-					result.put(xMetaClass, newXMetaFields);
-				}
-
-				if (xMetaClass.getId() == null) {
-					xMetaClass.setId(new XMetaId());
-				}
-
-				xMetaClass.getId().setRef(toCSV(idFields));
+				result.put(xMetaClass, null); // New Class Added!
 			}
+
+			if (xMetaClass.getInfo() == null) {
+				xMetaClass.setInfo(new XMetaInfoClass());
+			}
+
+			List<XMetaField> idFields = new ArrayList<>();
+			List<XMetaField> newXMetaFields = scanFields(classVO, xMetaClass, idFields);
+
+			if (!newXMetaFields.isEmpty() && !result.containsKey(xMetaClass)) {
+				result.put(xMetaClass, newXMetaFields);
+			}
+
+			if (xMetaClass.getId() == null) {
+				xMetaClass.setId(new XMetaId());
+			}
+
+			xMetaClass.getId().setRef(toCSV(idFields));
 		}
 
 		logger.info("Finished Scanning Package: {}", pkg);
@@ -121,6 +127,10 @@ public class MetaHandler {
 	}
 
 	public static List<Class> processPackage(String packageName, Boolean includeSubPackages) {
+		if (X_META.getFilterClass() != null) {
+			FILTER_CLASS_CHECK = GROOVY_SHELL.parse(X_META.getFilterClass());
+		}
+
 		try {
 			String path = packageName.replace('.', '/');
 			Enumeration<URL> resources = CLASS_LOADER.getResources(path);
@@ -160,37 +170,39 @@ public class MetaHandler {
 		List<XMetaField> result = new ArrayList<>();
 
 		for (FieldVO fieldVO : classVO.getDeclaredFieldsMap().values()) {
-			XMetaField xMetaField = xMetaClass.findXMetaField(fieldVO.getName());
-			if (xMetaField == null) {
-				xMetaField = new XMetaField();
-				xMetaField.setName(fieldVO.getName());
+			if (!fieldVO.isStatic() && !fieldVO.isFinal()) {
+				XMetaField xMetaField = xMetaClass.findXMetaField(fieldVO.getName());
+				if (xMetaField == null) {
+					xMetaField = new XMetaField();
+					xMetaField.setName(fieldVO.getName());
 
-				if (IGNORED_FIELDS.contains(fieldVO.getName()) || fieldVO.isStatic()) {
-					xMetaField.getInfo().setIgnore(true);
+					if (IGNORED_FIELDS.contains(fieldVO.getName()) || fieldVO.isStatic()) {
+						xMetaField.getInfo().setIgnore(true);
+					}
+
+					if (READ_ONLY_FIELDS.contains(fieldVO.getName()) || LIST_ONLY_FIELDS.contains(fieldVO.getName())) {
+						xMetaField.getInfo().setHasForm(false);
+					}
+
+					if (LIST_ONLY_FIELDS.contains(fieldVO.getName())) {
+						xMetaField.getInfo().setHasSVO(false);
+					}
+
+					if (fieldVO.isOf(Date.class)) {
+						xMetaField.getInfo().setHasTimePart(true);
+					}
+
+					xMetaClass.getFields().add(xMetaField);
+					result.add(xMetaField);
 				}
 
-				if(READ_ONLY_FIELDS.contains(fieldVO.getName()) || LIST_ONLY_FIELDS.contains(fieldVO.getName())) {
-					xMetaField.getInfo().setHasForm(false);
+				if (xMetaField.getInfo() == null) {
+					xMetaField.setInfo(new XMetaInfoField());
 				}
 
-				if(LIST_ONLY_FIELDS.contains(fieldVO.getName())) {
-					xMetaField.getInfo().setHasSVO(false);
+				if (fieldVO.isId()) {
+					idFields.add(xMetaField);
 				}
-
-				if(fieldVO.isOf(Date.class)) {
-					xMetaField.getInfo().setHasTimePart(true);
-				}
-
-				xMetaClass.getFields().add(xMetaField);
-				result.add(xMetaField);
-			}
-
-			if (xMetaField.getInfo() == null) {
-				xMetaField.setInfo(new XMetaInfoField());
-			}
-
-			if (fieldVO.isId()) {
-				idFields.add(xMetaField);
 			}
 		}
 
@@ -215,7 +227,19 @@ public class MetaHandler {
 				} else if (file.getName().endsWith(".class")) {
 					String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
 					Class<?> cls = Class.forName(className, true, CLASS_LOADER);
-					classes.add(cls);
+
+					if (FILTER_CLASS_CHECK != null) {
+						ClassVO classVO = new ClassVO(cls);
+						Binding binding = new Binding();
+						binding.setVariable("targetClass", classVO);
+						FILTER_CLASS_CHECK.setBinding(binding);
+						Boolean isValid = (Boolean) FILTER_CLASS_CHECK.run();
+						if (isValid) {
+							classes.add(cls);
+						}
+					} else {
+						classes.add(cls);
+					}
 				}
 			}
 		}

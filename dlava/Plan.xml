@@ -35,7 +35,7 @@
 		<volcano name="FVO">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/FVO.gsp"
@@ -49,7 +49,7 @@
 		<volcano name="ServiceI">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/ServiceInterface.gsp"
@@ -64,7 +64,7 @@
 		<volcano name="ServiceM">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/ServiceMain.gsp"
@@ -78,7 +78,7 @@
 		<volcano name="ListH">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/ListH.gsp"
@@ -92,7 +92,7 @@
 		<volcano name="ListJ">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/ListJ.gsp"
@@ -106,7 +106,7 @@
 		<volcano name="FormH">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/FormH.gsp"
@@ -120,7 +120,7 @@
 		<volcano name="FormJ">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 			<template file="/templates/FormJ.gsp"
@@ -136,7 +136,7 @@
 		<volcano name="LVO">
 			<precondition>
 				<![CDATA[
-				targetClass.normal && targetClass.ok
+				targetClass.entity && targetClass.ok
 				]]>
 			</precondition>
 

@@ -10,6 +10,8 @@ import java.util.List;
 
 @Entity
 public class Person implements Serializable {
+	private static final long serialVersionUID = 2L;
+
 	@Id
 	private Long id;
 

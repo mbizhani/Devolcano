@@ -10,9 +10,18 @@ import java.util.Map;
 
 @XStreamAlias("meta")
 public class XMeta implements Serializable {
+	private String filterClass;
 	private List<XMetaClass> classes;
 
 	// ------------------------------
+
+	public String getFilterClass() {
+		return filterClass;
+	}
+
+	public void setFilterClass(String filterClass) {
+		this.filterClass = filterClass;
+	}
 
 	public List<XMetaClass> getClasses() {
 		return classes;

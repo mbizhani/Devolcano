@@ -1,11 +1,12 @@
 package org.devocative.devolcano.test.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Entity
 public class Book implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	private Long id;
 
@@ -14,6 +15,9 @@ public class Book implements Serializable {
 
 	@Column
 	private Integer publishYear;
+
+	@Embedded
+	private EBookType bookType;
 
 	@ManyToOne
 	private Person author;
@@ -42,6 +46,14 @@ public class Book implements Serializable {
 
 	public void setPublishYear(Integer publishYear) {
 		this.publishYear = publishYear;
+	}
+
+	public EBookType getBookType() {
+		return bookType;
+	}
+
+	public void setBookType(EBookType bookType) {
+		this.bookType = bookType;
 	}
 
 	public Person getAuthor() {

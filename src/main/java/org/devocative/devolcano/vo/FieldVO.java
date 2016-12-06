@@ -64,6 +64,10 @@ public class FieldVO {
 		return Modifier.isStatic(field.getModifiers());
 	}
 
+	public boolean isFinal() {
+		return Modifier.isFinal(field.getModifiers());
+	}
+
 	public XMetaInfoField getInfo() {
 		if (xMetaField == null) {
 			xMetaField = owner.getXMetaClass().findXMetaField(getName());
