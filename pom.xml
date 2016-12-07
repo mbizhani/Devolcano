@@ -91,10 +91,23 @@
 		</dependency>
 
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>2.4.7</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jmeld</groupId>
+			<artifactId>jmeld</artifactId>
+			<version>3.2</version>
+		</dependency>
+
 
 		<!-- MAVEN PLUGIN -->
 

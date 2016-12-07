@@ -2,4 +2,7 @@
 
 target/
 
+dlava/diff
+dlava/diffResolve.txt
+
 *.iml

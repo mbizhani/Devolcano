@@ -6,6 +6,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
+import org.apache.commons.io.IOUtils;
 import org.devocative.devolcano.vo.ClassVO;
 import org.devocative.devolcano.xml.metadata.XMetaClass;
 import org.devocative.devolcano.xml.metadata.XMetaField;
@@ -28,6 +29,7 @@ public class CodeEruption {
 	private static SimpleTemplateEngine TEMPLATE_ENGINE;
 
 	private static XPlan X_PLAN;
+	private static FileWriter DIFF_RESOLVE_WRITER;
 
 	private static File BASE_DIR;
 	private static ContextVO CONTEXT;
@@ -97,6 +99,8 @@ public class CodeEruption {
 
 	public static void erupt() throws Exception {
 		if (X_PLAN.getPackageMap().size() > 0) {
+
+			DIFF_RESOLVE_WRITER = new FileWriter(BASE_DIR.getAbsolutePath() + "/dlava/diffResolve.txt", false);
 			for (XPackageFrom packageFrom : X_PLAN.getPackageMap()) {
 				if (packageFrom.getIgnore()) {
 					logger.warn("/!\\From[{}]", packageFrom.getPkg());
@@ -104,6 +108,8 @@ public class CodeEruption {
 					generatePackageFrom(packageFrom);
 				}
 			}
+			DIFF_RESOLVE_WRITER.close();
+
 		} else {
 			logger.warn("No package map!");
 		}
@@ -136,15 +142,16 @@ public class CodeEruption {
 					(packageFrom.getExcludePattern() == null || !name.contains(packageFrom.getExcludePattern()))) {
 					logger.info("[{}]", name);
 					for (XPackageTo packageTo : packageFrom.getTos()) {
-						if (packageTo.getIgnore())
+						if (packageTo.getIgnore()) {
 							logger.warn("\t[{}] Ignored!", name, packageTo.getGeneratorRef());
-						else {
+						} else {
 							//logger.info("____To[{}]", packageTo.getPkgReplace());
 							generateClass(cls, packageFrom, packageTo);
 						}
 					}
-				} else
+				} else {
 					logger.warn("[{}] Ignored!", name);
+				}
 			}
 		} else {
 			logger.warn("No class found in {} with sub={}", packageFrom.getPkg(), packageFrom.getIncludeSubPackages());
@@ -184,48 +191,47 @@ public class CodeEruption {
 			}
 
 			//logger.info("________[{}] (doGen: {})", cls.getName(), doGenFile);
-			if (doGenFile) {
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("targetClass", classVO);
-				params.put("targetVO", genTarget);
-				params.put("context", CONTEXT);
-				params.put("importHelper", new ImportHelper());
+			Map<String, Object> params = new HashMap<>();
+			params.put("targetClass", classVO);
+			params.put("targetVO", genTarget);
+			params.put("context", CONTEXT);
+			params.put("importHelper", new ImportHelper());
 
-				if (!TEMPLATE_CACHE.containsKey(xVolcano)) {
-					InputStream templateIS;
-					if (xTemplate.getFile().startsWith("/")) {
-						templateIS = CodeEruption.class.getResourceAsStream(xTemplate.getFile());
-					} else {
-						templateIS = new FileInputStream(
-							new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), xTemplate.getFile())));
-					}
-
-					StringBuilder builder = new StringBuilder();
-
-					if (X_PLAN.getPre() != null) {
-						builder
-							.append("<%\n")
-							.append(X_PLAN.getPre())
-							.append("\n%>\n");
-					}
-					byte[] bytes = load(templateIS);
-					builder.append(new String(bytes));
-
-					TEMPLATE_CACHE.put(xVolcano, TEMPLATE_ENGINE.createTemplate(builder.toString()));
-				}
-
-				Template gTemplate = TEMPLATE_CACHE.get(xVolcano);
-				String genContent = gTemplate.make(params).toString();
-
-				ImportHelper importHelper = (ImportHelper) params.get("importHelper");
-				String importsStr = importHelper.generateImports(genTarget.getPkg()).trim();
-
-				if (!importsStr.equals("")) {
-					genContent = genContent.replace("@IMPORT@", importsStr);
+			if (!TEMPLATE_CACHE.containsKey(xVolcano)) {
+				InputStream templateIS;
+				if (xTemplate.getFile().startsWith("/")) {
+					templateIS = CodeEruption.class.getResourceAsStream(xTemplate.getFile());
 				} else {
-					genContent = genContent.replace("\n@IMPORT@\n", "");
+					templateIS = new FileInputStream(
+						new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), xTemplate.getFile())));
 				}
 
+				StringBuilder builder = new StringBuilder();
+
+				if (X_PLAN.getPre() != null) {
+					builder
+						.append("<%\n")
+						.append(X_PLAN.getPre())
+						.append("\n%>\n");
+				}
+				builder.append(IOUtils.toString(templateIS));
+
+				TEMPLATE_CACHE.put(xVolcano, TEMPLATE_ENGINE.createTemplate(builder.toString()));
+			}
+
+			Template gTemplate = TEMPLATE_CACHE.get(xVolcano);
+			String genContent = gTemplate.make(params).toString();
+
+			ImportHelper importHelper = (ImportHelper) params.get("importHelper");
+			String importsStr = importHelper.generateImports(genTarget.getPkg()).trim();
+
+			if (!importsStr.equals("")) {
+				genContent = genContent.replace("@IMPORT@", importsStr);
+			} else {
+				genContent = genContent.replace("\n@IMPORT@\n", "");
+			}
+
+			if (doGenFile) {
 				destFile.getParentFile().mkdirs();
 				FileWriter writer = new FileWriter(destFile, false);
 				if ("check".equals(xTemplate.getOverwrite())) {
@@ -234,8 +240,25 @@ public class CodeEruption {
 				writer.write(genContent.trim());
 				writer.close();
 				//logger.info("++++++++Generated: [{}]", destFile.getCanonicalPath());
+			} else {
+				String diff = BASE_DIR.getAbsolutePath()
+					+ "/dlava/diff/"
+					+ packageTo.getGenDir()
+					+ "/"
+					+ genTarget.getFqnDir()
+					+ "."
+					+ xTemplate.getGenFileType();
+
+				File diffFile = new File(diff);
+				diffFile.getParentFile().mkdirs();
+				FileWriter writer = new FileWriter(diffFile, false);
+				writer.write(genContent.trim());
+				writer.close();
+
+				DIFF_RESOLVE_WRITER.write(String.format("%s|%s\n", destFile.getAbsolutePath(), diffFile.getAbsolutePath()));
 			}
 		}
+
 		logger.info("\t[{}] (pre:{}, gen:{})", packageTo.getGeneratorRef(), preCond, doGenFile);
 		if (doGenFile) {
 			logger.info("\t+ {}", dest4log);
@@ -246,23 +269,4 @@ public class CodeEruption {
 		}
 	}
 
-	private static byte[] load(InputStream in) {
-		try {
-			byte buffer[] = new byte[1024];
-			int read;
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-			while ((read = in.read(buffer)) != -1) {
-				out.write(buffer, 0, read);
-			}
-			byte[] bytes = out.toByteArray();
-
-			in.close();
-			out.close();
-
-			return bytes;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
 }
