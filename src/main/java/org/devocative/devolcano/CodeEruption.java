@@ -37,16 +37,14 @@ public class CodeEruption {
 	// ------------------------------
 
 	public static void init(File baseDir) throws Exception {
-		logger.info("Maven Base Dir: {}", baseDir.getAbsolutePath());
-
-		File file = new File(baseDir.getAbsolutePath() + PLAN_FILE);
+		File file = new File(baseDir.getCanonicalPath() + PLAN_FILE);
 
 		int retry = 1;
 		while (retry < 4) {
 			if (file.exists()) {
 				break;
 			} else {
-				file = new File(baseDir.getParentFile().getAbsolutePath() + PLAN_FILE);
+				file = new File(baseDir.getParentFile().getCanonicalPath() + PLAN_FILE);
 				retry++;
 			}
 		}
@@ -55,20 +53,20 @@ public class CodeEruption {
 			throw new RuntimeException("Plan file not exist: " + PLAN_FILE);
 		}
 
-		logger.info("Plan file: {}", file.getAbsolutePath());
+		logger.info("Plan file: {}", file.getCanonicalPath());
 
 		XStream xstream = new XStream();
 		xstream.processAnnotations(XPlan.class);
 		X_PLAN = (XPlan) xstream.fromXML(file);
 		CONTEXT = new ContextVO(X_PLAN);
 
-		BASE_DIR = file.getAbsoluteFile().getParentFile().getParentFile().getCanonicalFile();
-		logger.info("Project Base Directory: {}", BASE_DIR.getAbsolutePath());
+		BASE_DIR = file.getCanonicalFile().getParentFile().getParentFile().getCanonicalFile();
+		logger.info("Project Base Directory: {}", BASE_DIR.getCanonicalFile());
 
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		TEMPLATE_ENGINE = new SimpleTemplateEngine(classLoader);
 
-		MetaHandler.init(BASE_DIR.getAbsolutePath());
+		MetaHandler.init(BASE_DIR.getCanonicalPath());
 		Map<XMetaClass, List<XMetaField>> changes = new HashMap<>();
 		if (X_PLAN.getPackageMap().size() > 0) {
 			for (XPackageFrom packageFrom : X_PLAN.getPackageMap()) {
@@ -100,7 +98,7 @@ public class CodeEruption {
 	public static void erupt() throws Exception {
 		if (X_PLAN.getPackageMap().size() > 0) {
 
-			DIFF_RESOLVE_WRITER = new FileWriter(BASE_DIR.getAbsolutePath() + "/dlava/diffResolve.txt", false);
+			DIFF_RESOLVE_WRITER = new FileWriter(BASE_DIR.getCanonicalPath() + "/dlava/diffResolve.txt", false);
 			for (XPackageFrom packageFrom : X_PLAN.getPackageMap()) {
 				if (packageFrom.getIgnore()) {
 					logger.warn("/!\\From[{}]", packageFrom.getPkg());
@@ -171,7 +169,7 @@ public class CodeEruption {
 		String dest4log = genTarget.getFqnDir() + "." + xTemplate.getGenFileType();
 
 		if (preCond) {
-			String dest = BASE_DIR.getAbsolutePath()
+			String dest = BASE_DIR.getCanonicalPath()
 				+ "/"
 				+ packageTo.getGenDir()
 				+ "/"
@@ -203,7 +201,7 @@ public class CodeEruption {
 					templateIS = CodeEruption.class.getResourceAsStream(xTemplate.getFile());
 				} else {
 					templateIS = new FileInputStream(
-						new File(String.format("%s/%s", BASE_DIR.getAbsolutePath(), xTemplate.getFile())));
+						new File(String.format("%s/%s", BASE_DIR.getCanonicalPath(), xTemplate.getFile())));
 				}
 
 				StringBuilder builder = new StringBuilder();
@@ -241,7 +239,7 @@ public class CodeEruption {
 				writer.close();
 				//logger.info("++++++++Generated: [{}]", destFile.getCanonicalPath());
 			} else {
-				String diff = BASE_DIR.getAbsolutePath()
+				String diff = BASE_DIR.getCanonicalPath()
 					+ "/dlava/diff/"
 					+ packageTo.getGenDir()
 					+ "/"
@@ -255,7 +253,7 @@ public class CodeEruption {
 				writer.write(genContent.trim());
 				writer.close();
 
-				DIFF_RESOLVE_WRITER.write(String.format("%s|%s\n", destFile.getAbsolutePath(), diffFile.getAbsolutePath()));
+				DIFF_RESOLVE_WRITER.write(String.format("%s|%s\n", destFile.getCanonicalPath(), diffFile.getCanonicalPath()));
 			}
 		}
 

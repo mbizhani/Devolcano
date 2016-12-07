@@ -25,8 +25,6 @@ public class DevolcanoMavenPlugin extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		File baseDir = project.getBasedir();
-
 		try {
 			List<URL> urls = new ArrayList<>();
 
@@ -40,7 +38,7 @@ public class DevolcanoMavenPlugin extends AbstractMojo {
 
 			Thread.currentThread().setContextClassLoader(contextClassLoader);
 
-			CodeEruption.init(baseDir);
+			CodeEruption.init(project.getBasedir());
 			CodeEruption.erupt();
 		} catch (Exception e) {
 			throw new MojoExecutionException("Generation", e);

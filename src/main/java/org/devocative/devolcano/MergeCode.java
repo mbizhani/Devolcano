@@ -16,10 +16,28 @@ import java.util.Map;
 public class MergeCode implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(MergeCode.class);
 
-	public static void merge(File baseDir) throws Exception {
-		File diffResolve = new File(baseDir.getAbsolutePath() + "/dlava/diffResolve.txt");
+	private static final String DIFF_RESOLVE_FILE = "/dlava/diffResolve.txt";
 
-		List<String> mergeItems = FileUtils.readLines(diffResolve);
+	public static void merge(File baseDir) throws Exception {
+		File file = new File(baseDir.getCanonicalPath() + DIFF_RESOLVE_FILE);
+
+		int retry = 1;
+		while (retry < 4) {
+			if (file.exists()) {
+				break;
+			} else {
+				file = new File(baseDir.getParentFile().getCanonicalPath() + DIFF_RESOLVE_FILE);
+				retry++;
+			}
+		}
+
+		if (!file.exists()) {
+			throw new RuntimeException("Diff Resolve file not exist: " + DIFF_RESOLVE_FILE);
+		}
+
+		logger.info("Diff Resolve file: {}", file.getCanonicalPath());
+
+		List<String> mergeItems = FileUtils.readLines(file);
 
 		Map<String, String> files = new LinkedHashMap<>();
 		for (String mergeItem : mergeItems) {

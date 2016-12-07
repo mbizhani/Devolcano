@@ -37,13 +37,13 @@ public class MetaHandler {
 
 	// ------------------------------
 
-	public static void init(String baseDir) {
+	public static void init(String baseDir) throws Exception {
 		logger.info("MetaHandler: Base Dir = {}", baseDir);
 
 		META_FILE = new File(baseDir + META_FILE_STR);
 
 		if (META_FILE.exists()) {
-			logger.info("Metadata file: {}", META_FILE.getAbsolutePath());
+			logger.info("Metadata file: {}", META_FILE.getCanonicalPath());
 
 			XStream xStream = getXStream();
 			X_META = (XMeta) xStream.fromXML(META_FILE);
@@ -101,9 +101,9 @@ public class MetaHandler {
 		return result;
 	}
 
-	public static void write() {
+	public static void write() throws IOException {
 		META_FILE.getParentFile().mkdirs();
-		logger.info("Writing to Metadata.xml: {}", META_FILE.getAbsolutePath());
+		logger.info("Writing to Metadata.xml: {}", META_FILE.getCanonicalPath());
 
 		XStream xStream = getXStream();
 		try {

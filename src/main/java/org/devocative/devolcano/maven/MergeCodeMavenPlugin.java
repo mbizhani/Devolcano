@@ -7,8 +7,6 @@ import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.devocative.devolcano.MergeCode;
 
-import java.io.File;
-
 @Mojo(name = "mergecode", requiresDependencyResolution = ResolutionScope.TEST)
 @Execute(phase = LifecyclePhase.TEST_COMPILE)
 public class MergeCodeMavenPlugin extends AbstractMojo {
@@ -18,9 +16,8 @@ public class MergeCodeMavenPlugin extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		File baseDir = project.getBasedir();
 		try {
-			MergeCode.merge(baseDir);
+			MergeCode.merge(project.getBasedir());
 		} catch (Exception e) {
 			throw new MojoExecutionException("Merge", e);
 		}
