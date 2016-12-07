@@ -48,7 +48,7 @@ public class FieldVO {
 		return field.isAnnotationPresent(annotClass);
 	}
 
-	public Annotation getAnnotation(Class<? extends Annotation> annotClass) {
+	public <T extends Annotation> T getAnnotation(Class<T> annotClass) {
 		return field.getAnnotation(annotClass);
 	}
 
@@ -132,5 +132,39 @@ public class FieldVO {
 
 	public boolean isEmbedded() {
 		return field.isAnnotationPresent(Embedded.class);
+	}
+
+	public String getColumnName() {
+		if (hasAnnotation(Column.class)) {
+			Column column = getAnnotation(Column.class);
+			if (column.name() != null) {
+				return column.name();
+			} else {
+				return getName();
+			}
+		}
+		return null;
+	}
+
+	public boolean isUnique() {
+		boolean result = false;
+		if (hasAnnotation(Column.class)) {
+			Column column = getAnnotation(Column.class);
+			result = column.unique();
+		}
+
+		if (owner.hasAnnotation(Table.class)) {
+			Table table = (Table) owner.getAnnotation(Table.class);
+			if (table.uniqueConstraints() != null) {
+				for (UniqueConstraint constraint : table.uniqueConstraints()) {
+					if (constraint.columnNames() != null && constraint.columnNames().length == 1 &&
+						constraint.columnNames()[0].equals(getColumnName())) {
+						result = true;
+						break;
+					}
+				}
+			}
+		}
+		return result;
 	}
 }

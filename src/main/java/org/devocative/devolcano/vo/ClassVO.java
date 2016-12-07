@@ -7,6 +7,7 @@ import org.devocative.devolcano.xml.metadata.XMetaInfoClass;
 
 import javax.persistence.Entity;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -47,6 +48,14 @@ public class ClassVO {
 
 	public String getSimpleName() {
 		return cls.getSimpleName();
+	}
+
+	public boolean hasAnnotation(Class<? extends Annotation> annotClass) {
+		return cls.isAnnotationPresent(annotClass);
+	}
+
+	public Annotation getAnnotation(Class<? extends Annotation> aClass) {
+		return cls.getAnnotation(aClass);
 	}
 
 	public ClassVO getSuperclass() {

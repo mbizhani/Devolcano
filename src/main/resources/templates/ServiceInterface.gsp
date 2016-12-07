@@ -26,6 +26,17 @@ public interface ${targetVO.name} {
 
 	long count(${fvo.name} filter);
 <% }
+
+	// Generating load by unique fields
+	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+		if (field.ok && field.unique) {
+%>
+	${cls.simpleName} loadBy${field.name.toCapital()}(${imp.add(field.mainType)} ${field.name});
+<%
+		}
+	}
+
+	// Generating list for associations
     cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
 		if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
 			String type = imp.add(field.mainType)
@@ -35,4 +46,5 @@ public interface ${targetVO.name} {
 		}
 	}
 %>
+	// ==============================
 }
