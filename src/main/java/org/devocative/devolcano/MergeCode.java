@@ -18,6 +18,10 @@ public class MergeCode implements Runnable {
 
 	private static final String DIFF_RESOLVE_FILE = "/dlava/diffResolve.txt";
 
+	public static void main(String[] args) throws Exception {
+		merge(new File(args[0]));
+	}
+
 	public static void merge(File baseDir) throws Exception {
 		File file = new File(baseDir.getCanonicalPath() + DIFF_RESOLVE_FILE);
 
