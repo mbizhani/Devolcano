@@ -17,6 +17,7 @@
 
 	imp.add(javax.inject.Inject)
 	imp.add(List)
+	imp.add(Collections)
 
 	imp.add(org.devocative.demeter.web.DPage)
 	imp.add(org.devocative.demeter.web.component.DAjaxButton)
@@ -48,13 +49,39 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	@Inject
 	private ${iservice.name} ${service.name.toUncapital()};
 
-	private ${fvo.name} filter = new ${fvo.name}();
+	private ${fvo.name} filter;
+	private boolean formVisible = true;
+	private String[] invisibleFormItems;
+
 	private WDataGrid<${cls.simpleName}> grid;
+	private String[] removeColumns;
+
+	private boolean gridEnabled = false;
+	private OSize gridHeight = OSize.fixed(500);
+	private OSize gridWidth = OSize.percent(100);
 
 	// ------------------------------
 
+	// Panel Call - New Filter
+	public ${targetVO.name}(String id) {
+		this(id, Collections.<String>emptyList(), new ${fvo.name}());
+	}
+
+	// Panel Call - Open Filter
+	public ${targetVO.name}(String id, ${fvo.name} filter) {
+		this(id, Collections.<String>emptyList(), filter);
+	}
+
+	// REST Call - New Filter
 	public ${targetVO.name}(String id, List<String> params) {
+		this(id, params, new ${fvo.name}());
+	}
+
+	// Main Constructor
+	private ${targetVO.name}(String id, List<String> params, ${fvo.name} filter) {
 		super(id, params);
+
+		this.filter = filter;
 	}
 
 	// ------------------------------
@@ -152,7 +179,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				window.setContent(new ${formJ.name}(window.getContentId(), rowData.getObject()));
 				window.show(target);
 			}
-		});
+		}.setField("EDIT"));
 <% } else { %>
 		columnList.add(new ${imp.add(org.devocative.demeter.web.component.grid.ORESTLinkColumn)}<${cls.simpleName}>(new Model<String>(), ${formJ.name}.class, "${cls.idField.name}", ${imp.add(params["iconClass"])}.EDIT));
 <% } %>
@@ -160,14 +187,65 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 		oGrid
 			.setColumns(columnList)
 			.setMultiSort(false)
-			.setHeight(OSize.fixed(500))
-			.setWidth(OSize.percent(100));
+			.setHeight(gridHeight)
+			.setWidth(gridWidth);
 
 		grid = new WDataGrid<>("grid", oGrid, this);
-		grid.setEnabled(false);
 		add(grid);
+
+		// ---------------
+
+		form.setVisible(formVisible);
+		grid.setEnabled(gridEnabled || !formVisible);
+
+		if (invisibleFormItems != null) {
+			for (String formItem : invisibleFormItems) {
+				floatTable.get(formItem).setVisible(false);
+			}
+		}
+
+		if (removeColumns != null) {
+			for (String column : removeColumns) {
+				columnList.removeColumn(column);
+			}
+		}
 	}
 
+	// ------------------------------
+
+	public ${targetVO.name} setFormVisible(boolean formVisible) {
+		this.formVisible = formVisible;
+		return this;
+	}
+
+	public ${targetVO.name} setInvisibleFormItems(String... invisibleFormItems) {
+		this.invisibleFormItems = invisibleFormItems;
+		return this;
+	}
+
+	public ${targetVO.name} setGridHeight(OSize gridHeight) {
+		this.gridHeight = gridHeight;
+		return this;
+	}
+
+	public ${targetVO.name} setGridWidth(OSize gridWidth) {
+		this.gridWidth = gridWidth;
+		return this;
+	}
+
+	public ${targetVO.name} setGridEnabled(boolean gridEnabled) {
+		this.gridEnabled = gridEnabled;
+		return this;
+	}
+
+	public ${targetVO.name} setRemoveColumns(String... removeColumns) {
+		this.removeColumns = removeColumns;
+		return this;
+	}
+
+	// ------------------------------ IGridDataSource
+
+	@Override
 	public List<${cls.simpleName}> list(long pageIndex, long pageSize, List<WSortField>sortFields) {
 		return ${service.name.toUncapital()}.search(filter, pageIndex, pageSize);
 	}
