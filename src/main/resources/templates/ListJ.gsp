@@ -56,6 +56,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	private WDataGrid<${cls.simpleName}> grid;
 	private String[] removeColumns;
 
+	private Boolean gridFit;
 	private boolean gridEnabled = false;
 	private OSize gridHeight = OSize.fixed(500);
 	private OSize gridWidth = OSize.percent(100);
@@ -188,7 +189,8 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			.setColumns(columnList)
 			.setMultiSort(false)
 			.setHeight(gridHeight)
-			.setWidth(gridWidth);
+			.setWidth(gridWidth)
+			.setFit(gridFit);
 
 		grid = new WDataGrid<>("grid", oGrid, this);
 		add(grid);
@@ -230,6 +232,11 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 
 	public ${targetVO.name} setGridWidth(OSize gridWidth) {
 		this.gridWidth = gridWidth;
+		return this;
+	}
+
+	public ${targetVO.name} setGridFit(Boolean gridFit) {
+		this.gridFit = gridFit;
 		return this;
 	}
 
