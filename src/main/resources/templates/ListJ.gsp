@@ -103,9 +103,9 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			String component
 
 			if (field.isOf(Number)) {
-				component = """${imp.add(org.devocative.wickomp.form.WNumberRangeInput)}("${name}", ${imp.add(field.type)}.class)"""
+				component = """${imp.add(org.devocative.wickomp.form.range.WNumberRangeInput)}("${name}", ${imp.add(field.type)}.class)"""
 			} else if (field.isOf(Date)) {
-				component = """${imp.add(org.devocative.wickomp.form.WDateRangeInput)}("${name}")\n\t\t\t.setTimePartVisible(${field.info.hasTimePart})"""
+				component = """${imp.add(org.devocative.wickomp.form.range.WDateRangeInput)}("${name}")\n\t\t\t.setTimePartVisible(${field.info.hasTimePart})"""
 			} else if (field.isOf(Boolean)) {
 				component = """${imp.add(org.devocative.wickomp.form.WBooleanInput)}("${name}")"""
 			} else if (field.embedded) {
