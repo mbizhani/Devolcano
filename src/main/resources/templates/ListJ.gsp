@@ -253,7 +253,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	// ------------------------------ IGridDataSource
 
 	@Override
-	public List<${cls.simpleName}> list(long pageIndex, long pageSize, List<WSortField>sortFields) {
+	public List<${cls.simpleName}> list(long pageIndex, long pageSize, List<WSortField> sortFields) {
 		return ${service.name.toUncapital()}.search(filter, pageIndex, pageSize);
 	}
 
