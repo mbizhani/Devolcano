@@ -94,6 +94,16 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 		final ${imp.add(org.devocative.wickomp.html.window.WModalWindow)} window = new WModalWindow("window");
 		window.getOptions().setHeight(OSize.percent(80)).setWidth(OSize.percent(80));
 		add(window);
+
+		add(new ${imp.add(org.devocative.wickomp.html.WAjaxLink)} ("add", ${imp.add(params["iconClass"])}.ADD) {
+			private static final long serialVersionUID = ${(targetVO.fqn + ".WAjaxLink").hashCode()}L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				window.setContent(new DimensionFormDPage(window.getContentId()));
+				window.show(target);
+			}
+		});
 <% } %>
 		WFloatTable floatTable = new WFloatTable("floatTable");
 		floatTable.setEqualWidth(true);

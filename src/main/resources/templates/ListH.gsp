@@ -2,8 +2,10 @@
 	org.devocative.devolcano.vo.ClassVO cls = targetClass
 %>
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
+<% 	if(params["ajaxEditColumn"]) { %>
 	<div wicket:id="window"></div>
-
+	<button wicket:id="add"></button>
+<% } %>
 	<form wicket:id="form">
 		<div class="dmt-form">
 			<div wicket:id="floatTable">
