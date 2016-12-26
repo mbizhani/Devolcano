@@ -100,7 +100,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				window.setContent(new DimensionFormDPage(window.getContentId()));
+				window.setContent(new ${formJ.name}(window.getContentId()));
 				window.show(target);
 			}
 		});
