@@ -97,7 +97,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 		window.getOptions().setHeight(OSize.percent(80)).setWidth(OSize.percent(80));
 		add(window);
 
-		add(new ${imp.add(org.devocative.wickomp.html.WAjaxLink)} ("add", ${imp.add(params["iconClass"])}.ADD) {
+		add(new ${imp.add(org.devocative.wickomp.html.WAjaxLink)}("add", ${imp.add(params["iconClass"])}.ADD) {
 			private static final long serialVersionUID = ${(targetVO.fqn + ".WAjaxLink").hashCode()}L;
 
 			@Override
