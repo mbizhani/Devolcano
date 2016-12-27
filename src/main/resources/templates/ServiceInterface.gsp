@@ -19,7 +19,16 @@ public interface ${targetVO.name} {
 	void saveOrUpdate(${cls.simpleName} entity);
 
 	${cls.simpleName} load(${imp.add(cls.idField.type)} ${cls.idField.name});
-
+<%
+	// Generating load by unique fields
+	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+		if (field.ok && field.unique) {
+%>
+	${cls.simpleName} loadBy${field.name.toCapital()}(${imp.add(field.mainType)} ${field.name});
+<%
+			}
+	}
+%>
 	List<${cls.simpleName}> list();
 <% if (fvo != null) { %>
 	List<${cls.simpleName}> search(${fvo.name} filter, long pageIndex, long pageSize);
@@ -27,18 +36,9 @@ public interface ${targetVO.name} {
 	long count(${fvo.name} filter);
 <% }
 
-	// Generating load by unique fields
-	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.unique) {
-%>
-	${cls.simpleName} loadBy${field.name.toCapital()}(${imp.add(field.mainType)} ${field.name});
-<%
-		}
-	}
-
 	// Generating list for associations
     cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
+		if (field.ok && field.association && (field.hasFVO || field.hasForm)) {
 			String type = imp.add(field.mainType)
 %>
 	List<${type}> get${field.name.toCapital()}List();

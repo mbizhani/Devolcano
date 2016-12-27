@@ -14,7 +14,7 @@ public class ${targetVO.name} implements ${imp.add(Serializable)} {
     StringBuilder setterGetterBuilder = new StringBuilder()
 
     cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-        if (field.ok && field.hasSVO) {
+        if (field.ok && field.hasFVO) {
             String type
             String searchAnnot = null
 

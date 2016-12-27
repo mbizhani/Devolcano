@@ -4,13 +4,16 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "t_book",
+	uniqueConstraints = {@UniqueConstraint(name = "uk", columnNames = {"c_name"})}
+)
 public class Book implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	private Long id;
 
-	@Column
+	@Column(name = "c_name")
 	private String name;
 
 	@Column

@@ -8,16 +8,15 @@
 	<pre>
 		<![CDATA[
 			def params = [
-				moduleShortName : "MTS".toLowerCase(),
-				ajaxEditColumn : false,
+				moduleShortName : "DMT".toLowerCase(),
+				ajaxEditColumn : true,
 				iconClass : org.devocative.demeter.web.DemeterIcon
 			]
 		]]>
 	</pre>
 
 	<packageMap>
-		<from pkg="org.devocative.devolcano.test.entity" includeSubPackages="false">
-			<!--<to pkgReplace="entity:vo" generatorRef="LVO" genDir="src/test/java"/>-->
+		<from pkg="org.devocative.devolcano.test.entity">
 			<to pkgReplace="entity:vo" generatorRef="FVO" genDir="src/test/java"/>
 
 			<to pkgReplace="entity:iservice" generatorRef="ServiceI" genDir="src/test/java"/>
@@ -35,7 +34,7 @@
 		<volcano name="FVO">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.hasFVO && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/FVO.gsp"
@@ -49,7 +48,7 @@
 		<volcano name="ServiceI">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.ok && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/ServiceInterface.gsp"
@@ -64,7 +63,7 @@
 		<volcano name="ServiceM">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.ok && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/ServiceMain.gsp"
@@ -78,7 +77,7 @@
 		<volcano name="ListH">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.hasList && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/ListH.gsp"
@@ -92,7 +91,7 @@
 		<volcano name="ListJ">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.hasList && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/ListJ.gsp"
@@ -106,7 +105,7 @@
 		<volcano name="FormH">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.hasForm && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/FormH.gsp"
@@ -120,7 +119,7 @@
 		<volcano name="FormJ">
 			<precondition>
 				<![CDATA[
-				targetClass.entity && targetClass.ok
+				targetClass.hasForm && targetClass.entity
 				]]>
 			</precondition>
 			<template file="/templates/FormJ.gsp"
@@ -131,22 +130,6 @@
 			</template>
 		</volcano>
 
-
-
-		<volcano name="LVO">
-			<precondition>
-				<![CDATA[
-				targetClass.entity && targetClass.ok
-				]]>
-			</precondition>
-
-			<template file="/templates/Test.gsp"
-					  prefix="Oops" suffix="LVO"
-					  genFileType="java"
-					  overwrite="check">
-				<overwriteCheckString>//overwrite</overwriteCheckString>
-			</template>
-		</volcano>
 	</volcanoes>
 
 </plan>

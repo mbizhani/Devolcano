@@ -29,7 +29,7 @@
 			</fields>
 		</class>
 		<class fqn="org.devocative.devolcano.test.entity.Book">
-			<cinfo/>
+			<cinfo hasForm="false"/>
 			<id ref="id"/>
 			<fields>
 				<field name="id">

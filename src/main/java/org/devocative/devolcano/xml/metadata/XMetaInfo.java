@@ -15,7 +15,7 @@ public abstract class XMetaInfo implements Serializable {
 	private Boolean hasList;
 
 	@XStreamAsAttribute
-	private Boolean hasSVO;
+	private Boolean hasFVO;
 
 	// ------------------------------
 
@@ -43,11 +43,11 @@ public abstract class XMetaInfo implements Serializable {
 		this.hasList = hasList;
 	}
 
-	public Boolean getHasSVO() {
-		return hasSVO != null ? hasSVO : true;
+	public Boolean getHasFVO() {
+		return hasFVO != null ? hasFVO : true;
 	}
 
-	public void setHasSVO(Boolean hasSVO) {
-		this.hasSVO = hasSVO;
+	public void setHasFVO(Boolean hasFVO) {
+		this.hasFVO = hasFVO;
 	}
 }

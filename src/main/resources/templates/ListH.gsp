@@ -1,8 +1,13 @@
 <%
 	org.devocative.devolcano.vo.ClassVO cls = targetClass
+	org.devocative.devolcano.ContextVO context = context
+
+	org.devocative.devolcano.GenTargetVO formJ = context.getGenTarget(cls, "FormJ")
 %>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
+
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-<% 	if(params["ajaxEditColumn"]) { %>
+<% 	if(params["ajaxEditColumn"] && formJ != null) { %>
 	<div wicket:id="window"></div>
 	<button wicket:id="add"></button>
 <% } %>
@@ -11,7 +16,7 @@
 			<div wicket:id="floatTable">
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.hasSVO) {
+		if (field.ok && field.hasFVO) {
 			out << """\t\t\t\t<div><div wicket:id="${name}"></div></div>\n"""
 		}
 	}
@@ -27,4 +32,7 @@
 	</form>
 
 	<div wicket:id="grid"></div>
+
 </wicket:panel>
+
+</html>

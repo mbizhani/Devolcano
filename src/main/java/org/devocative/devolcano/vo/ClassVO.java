@@ -184,11 +184,11 @@ public class ClassVO {
 	}
 
 	public boolean getHasList() {
-		return isOk() && (getInfo() == null || (getInfo().getHasList() && getInfo().getHasSVO()));
+		return isOk() && (getInfo() == null || (getInfo().getHasList() && getInfo().getHasFVO()));
 	}
 
-	public boolean getHasSVO() {
-		return isOk() && (getInfo() == null || getInfo().getHasSVO());
+	public boolean getHasFVO() {
+		return isOk() && (getInfo() == null || getInfo().getHasFVO());
 	}
 
 

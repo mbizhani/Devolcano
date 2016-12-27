@@ -89,8 +89,8 @@ public class FieldVO {
 		return owner.getHasList() && (getInfo() == null || getInfo().getHasList());
 	}
 
-	public boolean getHasSVO() {
-		return owner.getHasSVO() && (getInfo() == null || getInfo().getHasSVO());
+	public boolean getHasFVO() {
+		return owner.getHasFVO() && (getInfo() == null || getInfo().getHasFVO());
 	}
 
 	public String getListType() {

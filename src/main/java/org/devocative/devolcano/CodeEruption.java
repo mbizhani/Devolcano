@@ -136,8 +136,11 @@ public class CodeEruption {
 		if (classes.size() > 0) {
 			for (Class cls : classes) {
 				String name = cls.getName();
-				if ((packageFrom.getIncludePattern() == null || name.contains(packageFrom.getIncludePattern())) &&
-					(packageFrom.getExcludePattern() == null || !name.contains(packageFrom.getExcludePattern()))) {
+				if (
+					(packageFrom.getIncludePattern() == null || checkNameByPattern(name, packageFrom.getIncludePattern()))
+						&&
+					(packageFrom.getExcludePattern() == null || !checkNameByPattern(name, packageFrom.getExcludePattern()))
+					) {
 					logger.info("[{}]", name);
 					for (XPackageTo packageTo : packageFrom.getTos()) {
 						if (packageTo.getIgnore()) {
@@ -265,6 +268,17 @@ public class CodeEruption {
 		} else {
 			logger.info("\t- {}", dest4log);
 		}
+	}
+
+	private static boolean checkNameByPattern(String name, String pattern) {
+		String[] parts = pattern.split("[,]");
+		for (String part : parts) {
+			if (name.contains(part.trim())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

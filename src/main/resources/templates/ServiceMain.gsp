@@ -39,7 +39,24 @@ public class ${targetVO.name} implements ${iservice.name} {
 	public ${cls.simpleName} load(${imp.add(cls.idField.type)} ${cls.idField.name}) {
 		return persistorService.get(${cls.simpleName}.class, ${cls.idField.name});
 	}
-
+<%
+	// Generating load by unique fields
+	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+		if(field.ok && field.unique) {
+%>
+	@Override
+	public ${cls.simpleName} loadBy${field.name.toCapital()}(${imp.add(field.mainType)} ${field.name}) {
+		return persistorService
+			.createQueryBuilder()
+			.addFrom(${cls.simpleName}.class, "ent")
+			.addWhere("and ent.${field.name} = :${field.name}")
+			.addParam("${field.name}", ${field.name})
+			.object();
+	}
+<%
+			}
+	}
+%>
 	@Override
 	public List<${cls.simpleName}> list() {
 		return persistorService.list(${cls.simpleName}.class);
@@ -65,26 +82,9 @@ public class ${targetVO.name} implements ${iservice.name} {
 			.object();
 	}
 <% }
-	// Generating load by unique fields
-	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if(field.ok && field.unique) {
-%>
-	@Override
-	public ${cls.simpleName} loadBy${field.name.toCapital()}(${imp.add(field.mainType)} ${field.name}) {
-		return persistorService
-			.createQueryBuilder()
-			.addFrom(${cls.simpleName}.class, "ent")
-			.addWhere("and ent.${field.name} = :${field.name}")
-			.addParam("${field.name}", ${field.name})
-			.object();
-	}
-<%
-		}
-	}
-
 	// Generating list for associations
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.association && (field.hasSVO || field.hasForm)) {
+		if (field.ok && field.association && (field.hasFVO || field.hasForm)) {
 			String type = imp.add(field.mainType)
 %>
 	@Override

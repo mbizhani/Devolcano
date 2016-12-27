@@ -185,7 +185,7 @@ public class MetaHandler {
 					}
 
 					if (LIST_ONLY_FIELDS.contains(fieldVO.getName())) {
-						xMetaField.getInfo().setHasSVO(false);
+						xMetaField.getInfo().setHasFVO(false);
 					}
 
 					if (fieldVO.isOf(Date.class)) {

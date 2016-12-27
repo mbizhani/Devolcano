@@ -13,7 +13,9 @@
 	imp.add(cls)
 	imp.add(fvo)
 	imp.add(iservice)
-	imp.add(formJ)
+	if (formJ != null) {
+		imp.add(formJ)
+	}
 
 	imp.add(javax.inject.Inject)
 	imp.add(List)
@@ -90,7 +92,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-<% 	if(params["ajaxEditColumn"]) { %>
+<% 	if(params["ajaxEditColumn"] && formJ != null) { %>
 		final ${imp.add(org.devocative.wickomp.html.window.WModalWindow)} window = new WModalWindow("window");
 		window.getOptions().setHeight(OSize.percent(80)).setWidth(OSize.percent(80));
 		add(window);
@@ -109,7 +111,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 		floatTable.setEqualWidth(true);
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.hasSVO) {
+		if (field.ok && field.hasFVO) {
 			String component
 
 			if (field.isOf(Number)) {
@@ -180,7 +182,8 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 		}
 	}
 
-	if(params["ajaxEditColumn"]) {
+	if(formJ != null) {
+		if(params["ajaxEditColumn"]) {
 %>
 		columnList.add(new ${imp.add(org.devocative.wickomp.grid.column.link.OAjaxLinkColumn)}<${cls.simpleName}>(new Model<String>(), ${imp.add(params["iconClass"])}.EDIT) {
 			private static final long serialVersionUID = ${(targetVO.fqn + ".OAjaxLinkColumn").hashCode()}L;
@@ -191,9 +194,14 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				window.show(target);
 			}
 		}.setField("EDIT"));
-<% } else { %>
+<%
+		} else {
+%>
 		columnList.add(new ${imp.add(org.devocative.demeter.web.component.grid.ORESTLinkColumn)}<${cls.simpleName}>(new Model<String>(), ${formJ.name}.class, "${cls.idField.name}", ${imp.add(params["iconClass"])}.EDIT));
-<% } %>
+<%
+		}
+	}
+%>
 		OGrid<${cls.simpleName}> oGrid = new OGrid<>();
 		oGrid
 			.setColumns(columnList)
