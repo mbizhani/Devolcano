@@ -28,4 +28,5 @@
 				hasFVO (true|false)
 				listType (simple|search)
 				hasTimePart (true|false)
+				required (true|false)
 				>

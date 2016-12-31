@@ -110,6 +110,20 @@ public class FieldVO {
 		return field.isAnnotationPresent(Id.class);
 	}
 
+	public boolean isRequired() {
+		boolean result = false;
+		if (field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			result = !column.nullable();
+		} else if (field.isAnnotationPresent(JoinColumn.class)) {
+			JoinColumn column = field.getAnnotation(JoinColumn.class);
+			result = !column.nullable();
+		} else if(getInfo() != null) {
+			result = getInfo().getRequired();
+		}
+		return result;
+	}
+
 	public boolean isAssociation() {
 		return isOneToMany() || isOneToOne() || isManyToOne() || isManyToMany();
 	}

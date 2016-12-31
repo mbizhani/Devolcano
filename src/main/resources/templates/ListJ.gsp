@@ -138,7 +138,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 %>
 		Form<${fvo.name}> form = new Form<>("form", new CompoundPropertyModel<>(filter));
 		form.add(floatTable);
-		form.add(new DAjaxButton("search", new ResourceModel("label.search")) {
+		form.add(new DAjaxButton("search", new ResourceModel("label.search"), ${imp.add(params["iconClass"])}.SEARCH) {
 			private static final long serialVersionUID = ${(targetVO.fqn + ".DAjaxButton").hashCode()}L;
 
 			@Override

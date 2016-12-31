@@ -95,13 +95,17 @@ public class ${targetVO.name} extends DPage {
 				component = """${imp.add(org.devocative.wickomp.form.WTextInput)}("${name}")""";
 			}
 
+			if(field.required) {
+				component += "\n\t\t\t.setRequired(true)"
+			}
+
 			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
 		}
 	}
 %>
 		Form<${cls.simpleName}> form = new Form<>("form", new CompoundPropertyModel<>(entity));
 		form.add(floatTable);
-		form.add(new DAjaxButton("save", new ResourceModel("label.save")) {
+		form.add(new DAjaxButton("save", new ResourceModel("label.save"), ${imp.add(params["iconClass"])}.SAVE) {
 			private static final long serialVersionUID = ${(targetVO.fqn + ".DAjaxButton").hashCode()}L;
 
 			@Override

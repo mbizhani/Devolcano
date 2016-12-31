@@ -13,7 +13,7 @@ public class Book implements Serializable {
 	@Id
 	private Long id;
 
-	@Column(name = "c_name")
+	@Column(name = "c_name", nullable = false)
 	private String name;
 
 	@Column
@@ -23,6 +23,7 @@ public class Book implements Serializable {
 	private EBookType bookType;
 
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private Person author;
 
 	// ------------------------------

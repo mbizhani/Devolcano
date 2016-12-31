@@ -11,6 +11,9 @@ public class XMetaInfoField extends XMetaInfo {
 	@XStreamAsAttribute
 	private Boolean hasTimePart;
 
+	@XStreamAsAttribute
+	private Boolean required;
+
 	// ------------------------------
 
 	public String getListType() {
@@ -30,5 +33,13 @@ public class XMetaInfoField extends XMetaInfo {
 
 	public void setHasTimePart(Boolean hasTimePart) {
 		this.hasTimePart = hasTimePart;
+	}
+
+	public Boolean getRequired() {
+		return required != null ? required : false;
+	}
+
+	public void setRequired(Boolean required) {
+		this.required = required;
 	}
 }
