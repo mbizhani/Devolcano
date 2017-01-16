@@ -38,6 +38,14 @@
 				<field name="name">
 					<finfo/>
 				</field>
+				<field name="description">
+					<finfo textType="multiline">
+						<htmlAttr>cols=&quot;40&quot; rows=&quot;10&quot;</htmlAttr>
+					</finfo>
+				</field>
+				<field name="sampleCode">
+					<finfo textType="code" codeType="XML"/>
+				</field>
 				<field name="author">
 					<finfo/>
 				</field>

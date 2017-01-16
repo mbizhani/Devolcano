@@ -16,6 +16,12 @@ public class Book implements Serializable {
 	@Column(name = "c_name", nullable = false)
 	private String name;
 
+	@Column(name = "c_description", nullable = false)
+	private String description;
+
+	@Column(name = "c_sample_code", nullable = false)
+	private String sampleCode;
+
 	@Column
 	private Integer publishYear;
 
@@ -52,6 +58,14 @@ public class Book implements Serializable {
 		this.publishYear = publishYear;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public EBookType getBookType() {
 		return bookType;
 	}
@@ -66,5 +80,14 @@ public class Book implements Serializable {
 
 	public void setAuthor(Person author) {
 		this.author = author;
+	}
+
+	public String getSampleCode() {
+		return sampleCode;
+	}
+
+	public Book setSampleCode(String sampleCode) {
+		this.sampleCode = sampleCode;
+		return this;
 	}
 }

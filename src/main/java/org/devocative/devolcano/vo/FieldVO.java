@@ -75,7 +75,7 @@ public class FieldVO {
 		return xMetaField.getInfo();
 	}
 
-	// ---------------- CG4F Annot Helper Methods ----------------
+	// ---------------- XMetaInfoField Helper Methods ----------------
 
 	public boolean isOk() {
 		return !isId() && !isStatic() && (getInfo() == null || !getInfo().getIgnore());
@@ -100,6 +100,18 @@ public class FieldVO {
 		return getInfo() != null ? getInfo().getListType() : "simple";
 	}
 
+	public String getTextType() {
+		return getInfo() != null ? getInfo().getTextType() : "simple";
+	}
+
+	public String getCodeType() {
+		if(getInfo() == null) {
+			throw new RuntimeException("No MetaInfoField for field: " + getName());
+		}
+
+		return getInfo().getCodeType();
+	}
+
 	// ----------------- Hibernate/JPA Helper Methods -----------------
 
 	public boolean isAutoIncId() {
@@ -118,7 +130,7 @@ public class FieldVO {
 		} else if (field.isAnnotationPresent(JoinColumn.class)) {
 			JoinColumn column = field.getAnnotation(JoinColumn.class);
 			result = !column.nullable();
-		} else if(getInfo() != null) {
+		} else if (getInfo() != null) {
 			result = getInfo().getRequired();
 		}
 		return result;

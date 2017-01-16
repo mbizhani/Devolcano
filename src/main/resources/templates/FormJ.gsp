@@ -73,7 +73,7 @@ public class ${targetVO.name} extends DPage {
 		floatTable.setEqualWidth(true);
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
-		if (field.ok && field.hasForm) {
+		if (field.ok && field.hasForm && field.textType == "simple") {
 			String component
 
 			if (field.isOf(Number)) {
@@ -105,6 +105,30 @@ public class ${targetVO.name} extends DPage {
 %>
 		Form<${cls.simpleName}> form = new Form<>("form", new CompoundPropertyModel<>(entity));
 		form.add(floatTable);
+<%
+	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
+		if (field.ok && field.hasForm && field.isOf(String) && field.textType != "simple") {
+			String component
+
+			if(field.textType == "multiline") {
+				component = """${imp.add(org.apache.wicket.markup.html.form.TextArea)}("${name}")""";
+			} else if (field.textType == "html") {
+				//TODO implement HTML
+				throw new RuntimeException("HTML not implemented: ${name}")
+			} else if (field.textType == "code") {
+				component = """${imp.add(org.devocative.wickomp.form.code.WCodeInput)}("${name}", new ${imp.add(org.devocative.wickomp.form.code.OCode)}(${imp.add(org.devocative.wickomp.form.code.OCodeMode)}.${field.codeType}))""";
+			} else {
+				component = "Unknown textType=[${field.textType}] for field=[${name}]";
+			}
+
+			if(field.required) {
+				component += "\n\t\t\t.setRequired(true)"
+			}
+
+			out << """\t\tform.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
+		}
+	}
+%>
 		form.add(new DAjaxButton("save", new ResourceModel("label.save"), ${imp.add(params["iconClass"])}.SAVE) {
 			private static final long serialVersionUID = ${(targetVO.fqn + ".DAjaxButton").hashCode()}L;
 

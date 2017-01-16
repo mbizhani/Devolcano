@@ -20,7 +20,7 @@
 		<!ATTLIST field
 				name CDATA #REQUIRED>
 		<!ELEMENT field (finfo)*>
-		<!ELEMENT finfo (#PCDATA)>
+		<!ELEMENT finfo (#PCDATA|htmlAttr?)>
 		<!ATTLIST finfo
 				ignore (true|false)
 				hasForm (true|false)
@@ -29,4 +29,7 @@
 				listType (simple|search)
 				hasTimePart (true|false)
 				required (true|false)
+				textType (simple|multiline|richtext|code)
+				codeType (XML|SQL|PL_SQL|MS_SQL|MY_SQL|GROOVY)
 				>
+		<!ELEMENT htmlAttr (#PCDATA)>

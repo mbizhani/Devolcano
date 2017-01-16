@@ -103,7 +103,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jmeld</groupId>
+			<groupId>org.devocative</groupId>
 			<artifactId>jmeld</artifactId>
 			<version>3.2</version>
 		</dependency>
