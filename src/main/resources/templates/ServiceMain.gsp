@@ -17,6 +17,9 @@
 	imp.add(org.springframework.stereotype.Service)
 	imp.add(org.springframework.beans.factory.annotation.Autowired)
 
+	imp.add(org.slf4j.Logger)
+	imp.add(org.slf4j.LoggerFactory)
+
 %>
 package ${targetVO.pkg};
 
@@ -24,6 +27,7 @@ package ${targetVO.pkg};
 
 @Service("${params["moduleShortName"]}${targetVO.name}")
 public class ${targetVO.name} implements ${iservice.name} {
+	private static final Logger logger = LoggerFactory.getLogger(${targetVO.name}.class);
 
 	@Autowired
 	private IPersistorService persistorService;
