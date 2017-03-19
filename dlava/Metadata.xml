@@ -24,7 +24,7 @@
 					<finfo required="true"/>
 				</field>
 				<field name="weight">
-					<finfo/>
+					<finfo hasForm="false" hasFVO="false"/>
 				</field>
 			</fields>
 		</class>
