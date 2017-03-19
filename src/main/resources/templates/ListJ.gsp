@@ -8,7 +8,7 @@
 	org.devocative.devolcano.GenTargetVO service = context.getGenTarget(cls, "ServiceM")
 	org.devocative.devolcano.GenTargetVO formJ = context.getGenTarget(cls, "FormJ")
 
-	List commonFields = ["creationDate", "creatorUser", "modificationDate", "modifierUser", "version"]
+	List commonFields = ["rowMod", "creationDate", "creatorUser", "modificationDate", "modifierUser", "version"]
 
 	imp.add(cls)
 	imp.add(fvo)
@@ -94,7 +94,6 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 		super.onInitialize();
 <% 	if(params["ajaxEditColumn"] && formJ != null) { %>
 		final ${imp.add(org.devocative.wickomp.html.window.WModalWindow)} window = new WModalWindow("window");
-		window.getOptions().setHeight(OSize.percent(80)).setWidth(OSize.percent(80));
 		add(window);
 
 		add(new ${imp.add(org.devocative.wickomp.html.WAjaxLink)}("add", ${imp.add(params["iconClass"])}.ADD) {
@@ -132,7 +131,12 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				component = """${imp.add(org.devocative.wickomp.form.WTextInput)}("${name}")""";
 			}
 
-			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}")));\n"""
+			String visibility = ""
+			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
+				visibility = "\n\t\t\t.setVisible(getCurrentUser().isRoot())"
+			}
+
+			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}"))${visibility});\n"""
 		}
 	}
 %>
@@ -178,22 +182,28 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				cellFormatter += """\n\t\t\t.setStyle("direction:ltr")""";
 			}
 
+			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
+				out << "\t\tif(getCurrentUser().isRoot()) {\n\t"
+			}
 			out << """\t\tcolumnList.add(new OPropertyColumn<${cls.simpleName}>(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}"), "${name}")${cellFormatter});\n"""
+			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
+				out << "\t\t}\n"
+			}
 		}
 	}
 
 	if(formJ != null) {
 		if(params["ajaxEditColumn"]) {
 %>
-		columnList.add(new ${imp.add(org.devocative.wickomp.grid.column.link.OAjaxLinkColumn)}<${cls.simpleName}>(new Model<String>(), ${imp.add(params["iconClass"])}.EDIT) {
-			private static final long serialVersionUID = ${(targetVO.fqn + ".OAjaxLinkColumn").hashCode()}L;
+		columnList.add(new ${imp.add(org.devocative.demeter.web.component.grid.OEditAjaxColumn)}<${cls.simpleName}>() {
+			private static final long serialVersionUID = ${(targetVO.fqn + ".OEditAjaxColumn").hashCode()}L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target, IModel<${cls.simpleName}> rowData) {
 				window.setContent(new ${formJ.name}(window.getContentId(), rowData.getObject()));
 				window.show(target);
 			}
-		}.setField("EDIT"));
+		});
 <%
 		} else {
 %>
