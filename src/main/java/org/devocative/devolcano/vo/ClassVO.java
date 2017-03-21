@@ -191,6 +191,9 @@ public class ClassVO {
 		return isOk() && (getInfo() == null || getInfo().getHasFVO());
 	}
 
+	public boolean getHasAdd() {
+		return isOk() && (getInfo() == null || (getInfo().getHasForm() && getInfo().getHasAdd()));
+	}
 
 	/*public boolean hasView() {
 		return isOk() && (cg == null || cg.hasView());

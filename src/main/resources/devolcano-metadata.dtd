@@ -10,6 +10,7 @@
 		<!ATTLIST cinfo
 				ignore (true|false)
 				hasForm (true|false)
+				hasAdd (true|false)
 				hasList (true|false)
 				hasFVO (true|false)
 				>
