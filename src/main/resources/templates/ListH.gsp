@@ -21,10 +21,9 @@
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
 		if (field.ok && field.hasFVO) {
-			out << """\t\t\t\t<div><div wicket:id="${name}"></div></div>\n"""
+			out << """\t\t\t\t<div wicket:id="${name}"></div>\n"""
 		}
-	}
-%>
+	} %>
 			</div>
 
 			<button wicket:id="search"></button>
