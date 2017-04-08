@@ -110,7 +110,6 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 <% 		}
 	} %>
 		WFloatTable floatTable = new WFloatTable("floatTable");
-		floatTable.setEqualWidth(true);
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
 		if (field.ok && field.hasFVO) {

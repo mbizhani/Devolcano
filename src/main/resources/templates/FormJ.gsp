@@ -70,7 +70,6 @@ public class ${targetVO.name} extends DPage {
 		super.onInitialize();
 
 		WFloatTable floatTable = new WFloatTable("floatTable");
-		floatTable.setEqualWidth(true);
 <%
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
 		if (field.ok && field.hasForm && field.textType == "simple") {
