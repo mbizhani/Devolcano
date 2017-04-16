@@ -8,6 +8,11 @@
 	org.devocative.devolcano.GenTargetVO service = context.getGenTarget(cls, "ServiceM")
 	org.devocative.devolcano.GenTargetVO formJ = context.getGenTarget(cls, "FormJ")
 
+	Class prvlg = params["privilegeClass"];
+	if(prvlg != null) {
+		imp.add(prvlg)
+	}
+
 	List commonFields = ["rowMod", "creationDate", "creatorUser", "modificationDate", "modifierUser", "version"]
 
 	imp.add(cls)
@@ -106,7 +111,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				window.setContent(new ${formJ.name}(window.getContentId()));
 				window.show(target);
 			}
-		});
+		}<%= prvlg != null ? ".setVisible(hasPermission(${prvlg.simpleName}.${cls.simpleName}Add))":"" %>);
 <% 		}
 	} %>
 		WFloatTable floatTable = new WFloatTable("floatTable");
@@ -196,6 +201,21 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 
 	if(formJ != null) {
 		if(params["ajaxEditColumn"]) {
+			if(prvlg != null) {
+%>
+		if (hasPermission(${prvlg.simpleName}.${cls.simpleName}Edit)) {
+			columnList.add(new ${imp.add(org.devocative.demeter.web.component.grid.OEditAjaxColumn)}<${cls.simpleName}>() {
+				private static final long serialVersionUID = ${(targetVO.fqn + ".OEditAjaxColumn").hashCode()}L;
+
+				@Override
+				public void onClick(AjaxRequestTarget target, IModel<${cls.simpleName}> rowData) {
+					window.setContent(new ${formJ.name}(window.getContentId(), rowData.getObject()));
+					window.show(target);
+				}
+			});
+		}
+<%
+			} else {
 %>
 		columnList.add(new ${imp.add(org.devocative.demeter.web.component.grid.OEditAjaxColumn)}<${cls.simpleName}>() {
 			private static final long serialVersionUID = ${(targetVO.fqn + ".OEditAjaxColumn").hashCode()}L;
@@ -207,6 +227,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			}
 		});
 <%
+			}
 		} else {
 %>
 		columnList.add(new ${imp.add(org.devocative.demeter.web.component.grid.ORESTLinkColumn)}<${cls.simpleName}>(new Model<String>(), ${formJ.name}.class, "${cls.idField.name}", ${imp.add(params["iconClass"])}.EDIT));
