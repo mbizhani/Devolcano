@@ -271,14 +271,6 @@ public class CodeEruption {
 	}
 
 	private static boolean checkNameByPattern(String name, String pattern) {
-		String[] parts = pattern.split("[,]");
-		for (String part : parts) {
-			if (name.contains(part.trim())) {
-				return true;
-			}
-		}
-
-		return false;
+		return name.matches(pattern);
 	}
-
 }

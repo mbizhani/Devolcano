@@ -57,5 +57,29 @@
 				</field>
 			</fields>
 		</class>
+		<class fqn="org.devocative.devolcano.test.entity.BookStore">
+			<cinfo/>
+			<id ref="id"/>
+			<fields>
+				<field name="id">
+					<finfo/>
+				</field>
+				<field name="name">
+					<finfo/>
+				</field>
+				<field name="description">
+					<finfo/>
+				</field>
+				<field name="sampleCode">
+					<finfo/>
+				</field>
+				<field name="publishYear">
+					<finfo/>
+				</field>
+				<field name="bookType">
+					<finfo/>
+				</field>
+			</fields>
+		</class>
 	</classes>
 </meta>
