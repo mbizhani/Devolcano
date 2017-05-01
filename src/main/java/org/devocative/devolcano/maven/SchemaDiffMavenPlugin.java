@@ -5,7 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
-import org.devocative.demeter.core.ModuleLoader;
+import org.devocative.demeter.core.DemeterCore;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -42,7 +42,7 @@ public class SchemaDiffMavenPlugin extends AbstractMojo {
 			throw new MojoExecutionException("Schema", e);
 		}
 
-		ModuleLoader.generatePersistorSchemaDiff();
+		DemeterCore.generatePersistorSchemaDiff();
 	}
 
 	// ------------------------------
