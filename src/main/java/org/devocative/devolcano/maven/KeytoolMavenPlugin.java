@@ -27,7 +27,7 @@ public class KeytoolMavenPlugin extends AbstractDemeterMavenPlugin {
 
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
-		if (keyStoreDir == null || keyStorePass == null || key == null || protectionParam == null || keyEntry != null) {
+		if (keyStoreDir == null || keyStorePass == null || key == null || protectionParam == null || keyEntry == null) {
 			throw new MojoExecutionException("Invalid configuration! all parameters are mandatory!");
 		}
 
