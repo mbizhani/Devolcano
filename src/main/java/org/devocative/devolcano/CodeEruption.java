@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -215,7 +216,7 @@ public class CodeEruption {
 						.append(X_PLAN.getPre())
 						.append("\n%>\n");
 				}
-				builder.append(IOUtils.toString(templateIS));
+				builder.append(IOUtils.toString(templateIS, Charset.forName("UTF-8")));
 
 				TEMPLATE_CACHE.put(xVolcano, TEMPLATE_ENGINE.createTemplate(builder.toString()));
 			}

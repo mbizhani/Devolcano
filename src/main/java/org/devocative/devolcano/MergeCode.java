@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class MergeCode implements Runnable {
 
 		logger.info("Diff Resolve file: {}", file.getCanonicalPath());
 
-		List<String> mergeItems = FileUtils.readLines(file);
+		List<String> mergeItems = FileUtils.readLines(file, Charset.forName("UTF-8"));
 
 		Map<String, String> files = new LinkedHashMap<>();
 		for (String mergeItem : mergeItems) {
