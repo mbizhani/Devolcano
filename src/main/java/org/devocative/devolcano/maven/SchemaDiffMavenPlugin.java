@@ -14,6 +14,6 @@ public class SchemaDiffMavenPlugin extends AbstractDemeterMavenPlugin {
 
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
-		DemeterCore.generatePersistorSchemaDiff();
+		DemeterCore.get().generatePersistorSchemaDiff();
 	}
 }

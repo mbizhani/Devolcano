@@ -43,7 +43,7 @@
 	</scm>
 
 	<properties>
-		<lang.level>1.7</lang.level>
+		<lang.level>1.8</lang.level>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<d.slf4j.ver>1.7.25</d.slf4j.ver>
@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>2.4.11</version>
+			<version>2.4.12</version>
 		</dependency>
 
 		<dependency>
@@ -165,6 +165,13 @@
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
 				</configuration>
+			</plugin>
+
+			<!-- Maven Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>3.5</version>
 			</plugin>
 
 			<!-- Source -->
