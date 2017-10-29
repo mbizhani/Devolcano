@@ -165,9 +165,11 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 	cls.allFieldsMap.each { String name, org.devocative.devolcano.vo.FieldVO field ->
 		if (field.ok && field.hasList) {
 			String cellFormatter = ""
+			String genericType = ""
 
 			if (field.isOf(Date)) {
 				cellFormatter = "\n\t\t\t"
+				genericType = cls.simpleName;
 
 				if (field.info.hasTimePart) {
 					cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ODateFormatter)}.getDateTimeByUserPreference())"
@@ -178,9 +180,11 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				cellFormatter += """\n\t\t\t.setStyle("direction:ltr")""";
 			} else if (field.isOf(Boolean)) {
 				cellFormatter = "\n\t\t\t"
+				genericType = cls.simpleName;
 				cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.OBooleanFormatter)}.bool())"
 			} else if (field.isOf(Number)) {
 				cellFormatter = "\n\t\t\t"
+				genericType = cls.simpleName;
 				if (field.real) {
 					cellFormatter += ".setFormatter(${imp.add(org.devocative.wickomp.formatter.ONumberFormatter)}.real())"
 				} else {
@@ -192,7 +196,9 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
 				out << "\t\tif(getCurrentUser().isRoot()) {\n\t"
 			}
-			out << """\t\tcolumnList.add(new OPropertyColumn<${cls.simpleName}>(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}"), "${name}")${cellFormatter});\n"""
+			out << """\t\tcolumnList.add(new OPropertyColumn<${genericType}>(new ResourceModel("${
+				commonFields.contains(name) ? "entity" : cls.simpleName
+			}.${name}"), "${name}")${cellFormatter});\n"""
 			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
 				out << "\t\t}\n"
 			}
