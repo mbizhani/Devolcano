@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.apache.commons.io.FileUtils;
 import org.devocative.devolcano.vo.ClassVO;
 import org.devocative.devolcano.vo.FieldVO;
 import org.devocative.devolcano.xml.metadata.*;
@@ -14,7 +15,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class MetaHandler {
 	private static final Logger logger = LoggerFactory.getLogger(MetaHandler.class);
@@ -26,6 +30,7 @@ public class MetaHandler {
 		"rowMod", "creatorUser", "creationDate",
 		"modifierUser", "modificationDate");
 	private static final List<String> LIST_ONLY_FIELDS = Arrays.asList("version");
+	private static final XStream X_STREAM;
 
 	private static File META_FILE;
 	private static XMeta X_META;
@@ -37,6 +42,13 @@ public class MetaHandler {
 
 	// ------------------------------
 
+	static {
+		X_STREAM = new XStream();
+		X_STREAM.processAnnotations(XMeta.class);
+	}
+
+	// ------------------------------
+
 	public static void init(String baseDir) throws Exception {
 		logger.info("MetaHandler: Base Dir = {}", baseDir);
 
@@ -44,14 +56,12 @@ public class MetaHandler {
 
 		if (META_FILE.exists()) {
 			logger.info("Metadata file: {}", META_FILE.getCanonicalPath());
-
-			XStream xStream = getXStream();
-			X_META = (XMeta) xStream.fromXML(META_FILE);
+			X_META = (XMeta) X_STREAM.fromXML(META_FILE);
 		} else {
 			logger.info("Metadata file not exist!");
 
 			X_META = new XMeta();
-			X_META.setClasses(new ArrayList<XMetaClass>());
+			X_META.setClasses(new ArrayList<>());
 		}
 
 		CLASS_LOADER = Thread.currentThread().getContextClassLoader();
@@ -72,7 +82,7 @@ public class MetaHandler {
 			if (xMetaClass == null) {
 				xMetaClass = new XMetaClass();
 				xMetaClass.setFqn(aClass.getName());
-				xMetaClass.setFields(new ArrayList<XMetaField>());
+				xMetaClass.setFields(new ArrayList<>());
 				X_META.getClasses().add(xMetaClass);
 
 				result.put(xMetaClass, null); // New Class Added!
@@ -105,9 +115,8 @@ public class MetaHandler {
 		META_FILE.getParentFile().mkdirs();
 		logger.info("Writing to Metadata.xml: {}", META_FILE.getCanonicalPath());
 
-		XStream xStream = getXStream();
 		try {
-			String xml = xStream.toXML(X_META);
+			String xml = X_STREAM.toXML(X_META);
 			xml = xml.replaceAll("  ", "\t");
 
 			FileWriter writer = new FileWriter(META_FILE);
@@ -133,17 +142,7 @@ public class MetaHandler {
 
 		try {
 			String path = packageName.replace('.', '/');
-			Enumeration<URL> resources = CLASS_LOADER.getResources(path);
-			List<File> dirs = new ArrayList<>();
-			while (resources.hasMoreElements()) {
-				URL resource = resources.nextElement();
-				dirs.add(new File(resource.getFile()));
-			}
-			Set<Class> classes = new LinkedHashSet<>();
-			for (File directory : dirs) {
-				classes.addAll(findClasses(directory, packageName, includeSubPackages));
-			}
-			return classes;
+			return findClasses(path, includeSubPackages);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -209,47 +208,82 @@ public class MetaHandler {
 		return result;
 	}
 
-	private static Set<Class> findClasses(File directory, String packageName, Boolean includeSubPackages) throws ClassNotFoundException {
-		Set<Class> classes = new LinkedHashSet<>();
-		if (!directory.exists()) {
-			return classes;
-		}
+	private static Set<Class> findClasses(String dirStr, boolean recursive) throws Exception {
+		String[] extensions = new String[]{"class"};
 
-		if (!directory.isDirectory()) {
-			throw new RuntimeException(String.format("%s not a directory!", directory.getName()));
-		}
-
-		File[] files = directory.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (file.isDirectory() && includeSubPackages) {
-					assert !file.getName().contains(".");
-					classes.addAll(findClasses(file, packageName + "." + file.getName(), true));
-				} else if (file.getName().endsWith(".class")) {
-					String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-					Class<?> cls = Class.forName(className, true, CLASS_LOADER);
-
-					if (FILTER_CLASS_CHECK != null) {
-						ClassVO classVO = new ClassVO(cls);
-						Binding binding = new Binding();
-						binding.setVariable("targetClass", classVO);
-						FILTER_CLASS_CHECK.setBinding(binding);
-						Boolean isValid = (Boolean) FILTER_CLASS_CHECK.run();
-						if (isValid) {
-							classes.add(cls);
+		List<String> list = new ArrayList<>();
+		Enumeration<URL> resources = CLASS_LOADER.getResources(dirStr);
+		while (resources.hasMoreElements()) {
+			URL url = resources.nextElement();
+			switch (url.getProtocol()) {
+				case "file":
+					File dir = new File(url.toURI());
+					if (dir.isDirectory()) {
+						logger.info("\tFind Classes Under Directory: {}", dir.getAbsolutePath());
+						Collection<File> files = FileUtils.listFiles(new File(url.getPath()), extensions, recursive);
+						for (File f : files) {
+							String path = f.getAbsolutePath().replace('\\', '/');
+							int i = path.indexOf(dirStr);
+							list.add(path.substring(i));
 						}
 					} else {
-						classes.add(cls);
+						throw new RuntimeException("Invalid Directory: " + dir);
 					}
-				}
+					break;
+
+				case "jar":
+					String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
+					logger.info("\tFind Classes in JAR = {}", jarPath);
+
+					try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
+						Enumeration<JarEntry> entries = jar.entries();
+						while (entries.hasMoreElements()) {
+							JarEntry jarEntry = entries.nextElement();
+							String name = jarEntry.getName();
+							if (!jarEntry.isDirectory() && name.startsWith(dirStr) && hasExtension(name, extensions)) {
+								if (recursive) {
+									list.add(name);
+								} else if (!name.substring(dirStr.length() + 1).contains("/")) {
+									list.add(name);
+								}
+							}
+						}
+					}
+					break;
+
+				default:
+					throw new RuntimeException("Unsupported Protocol: " + url.getProtocol());
 			}
 		}
-		return classes;
+
+		Set<Class> result = new HashSet<>();
+		for (String s : list) {
+			Class<?> cls = Class.forName(s.substring(0, s.length() - 6).replace('/', '.'), true, CLASS_LOADER);
+			if (FILTER_CLASS_CHECK != null) {
+				ClassVO classVO = new ClassVO(cls);
+				Binding binding = new Binding();
+				binding.setVariable("targetClass", classVO);
+				FILTER_CLASS_CHECK.setBinding(binding);
+				Boolean isValid = (Boolean) FILTER_CLASS_CHECK.run();
+				if (isValid) {
+					result.add(cls);
+				}
+			} else {
+				result.add(cls);
+			}
+		}
+		return result;
 	}
 
-	private static XStream getXStream() {
-		XStream xStream = new XStream();
-		xStream.processAnnotations(XMeta.class);
-		return xStream;
+	private static boolean hasExtension(String dir, String[] exts) {
+		if (exts != null) {
+			for (String ext : exts) {
+				if (dir.endsWith("." + ext)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 }

@@ -143,7 +143,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				visibility = "\n\t\t\t.setVisible(getCurrentUser().isRoot())"
 			}
 
-			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}"))${visibility});\n"""
+			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}", "${name}"))${visibility});\n"""
 		}
 	}
 %>
@@ -196,9 +196,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
 				out << "\t\tif(getCurrentUser().isRoot()) {\n\t"
 			}
-			out << """\t\tcolumnList.add(new OPropertyColumn<${genericType}>(new ResourceModel("${
-				commonFields.contains(name) ? "entity" : cls.simpleName
-			}.${name}"), "${name}")${cellFormatter});\n"""
+			out << """\t\tcolumnList.add(new OPropertyColumn<${genericType}>(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}", "${name}"), "${name}")${cellFormatter});\n"""
 			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
 				out << "\t\t}\n"
 			}

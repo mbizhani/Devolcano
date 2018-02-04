@@ -98,7 +98,7 @@ public class ${targetVO.name} extends DPage {
 				component += "\n\t\t\t.setRequired(true)"
 			}
 
-			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
+			out << """\t\tfloatTable.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}", "${name}")));\n"""
 		}
 	}
 %>
@@ -124,7 +124,7 @@ public class ${targetVO.name} extends DPage {
 				component += "\n\t\t\t.setRequired(true)"
 			}
 
-			out << """\t\tform.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}")));\n"""
+			out << """\t\tform.add(new ${component}\n\t\t\t.setLabel(new ResourceModel("${cls.simpleName}.${name}", "${name}")));\n"""
 		}
 	}
 %>
