@@ -47,6 +47,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<d.slf4j.ver>1.7.25</d.slf4j.ver>
+		<d.demeter.ver>1.0</d.demeter.ver>
 
 		<p.compiler.ver>3.5.1</p.compiler.ver>
 		<p.release.ver>2.5.3</p.release.ver>
@@ -126,7 +127,7 @@
 		<dependency>
 			<groupId>org.devocative</groupId>
 			<artifactId>demeter-core</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${d.demeter.ver}</version>
 		</dependency>
 
 
@@ -135,7 +136,7 @@
 		<dependency>
 			<groupId>org.devocative</groupId>
 			<artifactId>demeter-web</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${d.demeter.ver}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -220,11 +221,11 @@
 			</plugin>
 
 			<!-- Test the Plugin -->
-			<plugin>
+			<!--<plugin>
 				<groupId>org.devocative</groupId>
 				<artifactId>demeter-maven-plugin</artifactId>
 				<version>1.0-SNAPSHOT</version>
-			</plugin>
+			</plugin>-->
 
 		</plugins>
 	</build>
