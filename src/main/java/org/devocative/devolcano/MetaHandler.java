@@ -27,7 +27,7 @@ public class MetaHandler {
 	//TODO find a better way!
 	private static final List<String> IGNORED_FIELDS = Arrays.asList("creatorUserId", "modifierUserId");
 	private static final List<String> READ_ONLY_FIELDS = Arrays.asList(
-		"rowMod", "creatorUser", "creationDate",
+		"rowMode", "creatorUser", "creationDate",
 		"modifierUser", "modificationDate");
 	private static final List<String> LIST_ONLY_FIELDS = Arrays.asList("version");
 	private static final XStream X_STREAM;

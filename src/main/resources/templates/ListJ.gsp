@@ -13,7 +13,7 @@
 		imp.add(prvlg)
 	}
 
-	List commonFields = ["rowMod", "creationDate", "creatorUser", "modificationDate", "modifierUser", "version"]
+	List commonFields = ["rowMode", "creationDate", "creatorUser", "modificationDate", "modifierUser", "version"]
 
 	imp.add(cls)
 	imp.add(fvo)
@@ -139,7 +139,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 			}
 
 			String visibility = ""
-			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
+			if(field.isOf(org.devocative.demeter.entity.ERowMode)) {
 				visibility = "\n\t\t\t.setVisible(getCurrentUser().isRoot())"
 			}
 
@@ -193,11 +193,11 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				cellFormatter += """\n\t\t\t.setStyle("direction:ltr")""";
 			}
 
-			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
+			if(field.isOf(org.devocative.demeter.entity.ERowMode)) {
 				out << "\t\tif(getCurrentUser().isRoot()) {\n\t"
 			}
 			out << """\t\tcolumnList.add(new OPropertyColumn<${genericType}>(new ResourceModel("${commonFields.contains(name) ? "entity" : cls.simpleName}.${name}", "${name}"), "${name}")${cellFormatter});\n"""
-			if(field.isOf(org.devocative.demeter.entity.ERowMod)) {
+			if(field.isOf(org.devocative.demeter.entity.ERowMode)) {
 				out << "\t\t}\n"
 			}
 		}

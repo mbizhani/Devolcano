@@ -148,7 +148,12 @@ public class CodeEruption {
 							logger.warn("\t[{}] Ignored!", name, packageTo.getGeneratorRef());
 						} else {
 							//logger.info("____To[{}]", packageTo.getPkgReplace());
-							generateClass(cls, packageFrom, packageTo);
+							try {
+								generateClass(cls, packageFrom, packageTo);
+							} catch (Exception e) {
+								logger.error("===>> CodeGen Error: class=[{}] volcano=[{}]", cls, packageTo.getGeneratorRef(), e);
+								throw e;
+							}
 						}
 					}
 				} else {

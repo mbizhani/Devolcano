@@ -6,6 +6,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.devocative.devolcano.CodeEruption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -17,6 +19,7 @@ import java.util.List;
 @Mojo(name = "codegen", requiresDependencyResolution = ResolutionScope.TEST)
 @Execute(phase = LifecyclePhase.TEST_COMPILE)
 public class DevolcanoMavenPlugin extends AbstractMojo {
+	private Logger logger = LoggerFactory.getLogger(DevolcanoMavenPlugin.class);
 
 	@Parameter(defaultValue = "${project}", required = true, readonly = true)
 	private MavenProject project;
@@ -41,6 +44,7 @@ public class DevolcanoMavenPlugin extends AbstractMojo {
 			CodeEruption.init(project.getBasedir());
 			CodeEruption.erupt();
 		} catch (Exception e) {
+			logger.error("DevolcanoMavenPlugin: ", e);
 			throw new MojoExecutionException("Generation", e);
 		}
 	}

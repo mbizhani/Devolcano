@@ -46,7 +46,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<d.slf4j.ver>1.7.25</d.slf4j.ver>
-		<d.demeter.ver>1.0</d.demeter.ver>
+		<d.groovy.ver>2.4.12</d.groovy.ver>
+		<d.demeter.ver>1.1-SNAPSHOT</d.demeter.ver>
 
 		<p.compiler.ver>3.5.1</p.compiler.ver>
 		<p.release.ver>2.5.3</p.release.ver>
@@ -99,7 +100,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>2.4.13</version>
+			<version>${d.groovy.ver}</version>
 		</dependency>
 
 		<dependency>
