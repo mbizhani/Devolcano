@@ -126,7 +126,7 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 				component = """${imp.add(org.devocative.wickomp.form.range.WDateRangeInput)}("${name}")\n\t\t\t.setTimePartVisible(${field.info.hasTimePart})"""
 			} else if (field.isOf(Boolean)) {
 				component = """${imp.add(org.devocative.wickomp.form.WBooleanInput)}("${name}")"""
-			} else if (field.embedded) {
+            } else if (field.enumeration) {
 				component = """${imp.add(org.devocative.wickomp.form.WSelectionInput)}("${name}", ${imp.add(field.mainType)}.list(), true)"""
 			} else if (field.association) {
 				if (field.listType == "simple") {

@@ -81,7 +81,7 @@ public class ${targetVO.name} extends DPage {
 				component = """${imp.add(org.devocative.wickomp.form.WDateInput)}("${name}")\n\t\t\t.setTimePartVisible(${field.info.hasTimePart})"""
 			} else if (field.isOf(Boolean)) {
 				component = """${imp.add(org.devocative.wickomp.form.WBooleanInput)}("${name}")"""
-			} else if (field.embedded) {
+			} else if (field.enumeration) {
 				component = """${imp.add(org.devocative.wickomp.form.WSelectionInput)}("${name}", ${imp.add(field.mainType)}.list(), false)"""
 			} else if (field.association) {
 				boolean isMultiple = field.oneToMany || field.manyToMany

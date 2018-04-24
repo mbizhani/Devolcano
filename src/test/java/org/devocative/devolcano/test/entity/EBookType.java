@@ -1,15 +1,13 @@
 package org.devocative.devolcano.test.entity;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class EBookType implements Serializable {
+public enum EBookType {
+	TEST(1);
+
 	private Integer id;
 
-	public EBookType() {
-	}
-
-	public EBookType(Integer id) {
+	EBookType(Integer id) {
 		this.id = id;
 	}
 

@@ -39,6 +39,7 @@ public class MergeCodeMavenPlugin extends AbstractMojo {
 			File.separator + "bin" +
 			File.separator + "java";
 
+		System.out.println("java.bin = " + javaBin);
 
 		List<URL> urls = new ArrayList<>();
 
@@ -49,18 +50,21 @@ public class MergeCodeMavenPlugin extends AbstractMojo {
 		addAll(urls, project.getCompileClasspathElements());
 		addAll(urls, project.getTestClasspathElements());
 
-		String classpath = System.getProperty("java.class.path");
+		StringBuilder classpath = new StringBuilder();
 		for (URL url : urls) {
-			classpath += ";" + url.getFile().substring(1);
+			classpath.append(":").append(url.getFile());
 		}
 		System.out.println("classpath = " + classpath);
 
-		String className = klass.getCanonicalName();
+		String className = klass.getName();
 		System.out.println("className = " + className);
 
-		ProcessBuilder builder = new ProcessBuilder(
-			javaBin, "-classpath", classpath, className, project.getBasedir().getCanonicalPath());
+		System.out.println("project.basedir = " + project.getBasedir().getCanonicalPath());
 
+		ProcessBuilder builder = new ProcessBuilder(
+			javaBin, "-classpath", classpath.toString(), className, project.getBasedir().getCanonicalPath());
+
+		builder.inheritIO();
 		builder.start();
 	}
 

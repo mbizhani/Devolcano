@@ -105,7 +105,7 @@ public class FieldVO {
 	}
 
 	public String getCodeType() {
-		if(getInfo() == null) {
+		if (getInfo() == null) {
 			throw new RuntimeException("No MetaInfoField for field: " + getName());
 		}
 
@@ -156,8 +156,8 @@ public class FieldVO {
 		return field.isAnnotationPresent(ManyToMany.class);
 	}
 
-	public boolean isEmbedded() {
-		return field.isAnnotationPresent(Embedded.class);
+	public boolean isEnumeration() {
+		return field.getType().isEnum();
 	}
 
 	public String getColumnName() {

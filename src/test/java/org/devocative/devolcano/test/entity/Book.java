@@ -25,7 +25,6 @@ public class Book implements Serializable {
 	@Column
 	private Integer publishYear;
 
-	@Embedded
 	private EBookType bookType;
 
 	@ManyToOne

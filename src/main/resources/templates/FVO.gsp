@@ -24,7 +24,7 @@ public class ${targetVO.name} implements ${imp.add(Serializable)} {
 //				def svo = context.getGenTarget(field.type, "SVO")
 //				type = "${imp.add(svo)}"
 //				searchAnnot = "@${imp.add(ir.fanap.common.hibernate.Search)}(useJoin = true)"
-            } else if (field.embedded || (field.association && field.listType == "simple")) {
+            } else if (field.enumeration || (field.association && field.listType == "simple")) {
                 if (field.isOf(Collection)) {
                     type = "${imp.add(field.type)}"
                 } else {
