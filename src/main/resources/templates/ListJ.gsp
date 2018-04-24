@@ -28,6 +28,7 @@
 
 	imp.add(org.devocative.demeter.web.DPage)
 	imp.add(org.devocative.demeter.web.component.DAjaxButton)
+	imp.add(org.devocative.demeter.web.model.DEntityLazyLoadModel)
 
 	imp.add(org.devocative.wickomp.grid.IGridDataSource)
 	imp.add(org.devocative.wickomp.grid.WDataGrid)
@@ -35,7 +36,6 @@
 	imp.add(org.devocative.wickomp.grid.column.OColumnList)
 	imp.add(org.devocative.wickomp.grid.column.OPropertyColumn)
 	imp.add(org.devocative.wickomp.grid.OGrid)
-	imp.add(org.devocative.wickomp.WModel)
 	imp.add(org.devocative.wickomp.opt.OSize)
 	imp.add(org.devocative.wickomp.grid.WSortField)
 
@@ -319,6 +319,6 @@ public class ${targetVO.name} extends DPage implements IGridDataSource<${cls.sim
 
 	@Override
 	public IModel<${cls.simpleName}> model(${cls.simpleName} object) {
-		return new WModel<>(object);
+return new DEntityLazyLoadModel<>(object.getId(), ${service.name.toUncapital()});
 	}
 }

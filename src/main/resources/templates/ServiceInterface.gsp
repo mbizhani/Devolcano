@@ -9,13 +9,14 @@
 		imp.add(fvo)
 	}
 	imp.add(cls)
-	imp.add(List.class)
+	imp.add(List)
+	imp.add(org.devocative.demeter.iservice.IEntityService)
 %>
 package ${targetVO.pkg};
 
 @IMPORT@
 
-public interface ${targetVO.name} {
+public interface ${targetVO.name} extends IEntityService<${cls.simpleName}> {
 	void saveOrUpdate(${cls.simpleName} entity);
 
 	${cls.simpleName} load(${imp.add(cls.idField.type)} ${cls.idField.name});
