@@ -160,6 +160,26 @@ public class FieldVO {
 		return field.getType().isEnum();
 	}
 
+	public boolean isHasAllCascade() {
+		if (field.isAnnotationPresent(OneToOne.class)) {
+			final OneToOne ann = field.getAnnotation(OneToOne.class);
+			return hasCascade(ann.cascade(), CascadeType.ALL);
+		}
+		if (field.isAnnotationPresent(OneToMany.class)) {
+			final OneToMany ann = field.getAnnotation(OneToMany.class);
+			return hasCascade(ann.cascade(), CascadeType.ALL);
+		}
+		if (field.isAnnotationPresent(ManyToOne.class)) {
+			final ManyToOne ann = field.getAnnotation(ManyToOne.class);
+			return hasCascade(ann.cascade(), CascadeType.ALL);
+		}
+		if (field.isAnnotationPresent(ManyToMany.class)) {
+			final ManyToMany ann = field.getAnnotation(ManyToMany.class);
+			return hasCascade(ann.cascade(), CascadeType.ALL);
+		}
+		return false;
+	}
+
 	public String getColumnName() {
 		if (hasAnnotation(Column.class)) {
 			Column column = getAnnotation(Column.class);
@@ -192,5 +212,18 @@ public class FieldVO {
 			}
 		}
 		return result;
+	}
+
+	// ------------------------------
+
+	private boolean hasCascade(CascadeType[] ann, CascadeType target) {
+		if (ann != null) {
+			for (CascadeType src : ann) {
+				if (src == target) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

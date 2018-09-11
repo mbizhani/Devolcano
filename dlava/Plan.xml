@@ -46,6 +46,20 @@
 			</template>
 		</volcano>
 
+		<volcano name="IVO">
+			<precondition>
+				<![CDATA[
+				targetClass.entity
+				]]>
+			</precondition>
+			<template file="/templates/IVO.gsp"
+					  suffix="IVO"
+					  genFileType="java"
+					  overwrite="check">
+				<overwriteCheckString>//overwrite</overwriteCheckString>
+			</template>
+		</volcano>
+
 		<volcano name="ServiceI">
 			<precondition>
 				<![CDATA[

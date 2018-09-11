@@ -39,6 +39,8 @@ public class ${targetVO.name} extends DPage {
 
 	private ${cls.simpleName} entity;
 
+	private boolean readOnly = false;
+
 	// ------------------------------
 
 	public ${targetVO.name}(String id) {
@@ -64,6 +66,13 @@ public class ${targetVO.name} extends DPage {
 	}
 
 	// ------------------------------
+
+public ${targetVO.name} setReadOnly(boolean readOnly) {
+this.readOnly = readOnly;
+return this;
+}
+
+// ------------------------------
 
 	@Override
 	protected void onInitialize() {
@@ -139,7 +148,9 @@ public class ${targetVO.name} extends DPage {
 					UrlUtil.redirectTo(${listJ.name}.class);
 				}
 			}
-		});
+}.setVisible(!readOnly));
 		add(form);
+
+setEnabled(!readOnly);
 	}
 }

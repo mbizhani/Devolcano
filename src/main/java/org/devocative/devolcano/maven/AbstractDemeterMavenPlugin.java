@@ -34,9 +34,9 @@ public abstract class AbstractDemeterMavenPlugin extends AbstractMojo {
 		List<URL> urls = new ArrayList<>();
 
 		try {
+			addAll(urls, project.getTestClasspathElements());
 			addAll(urls, project.getRuntimeClasspathElements());
 			addAll(urls, project.getCompileClasspathElements());
-			addAll(urls, project.getTestClasspathElements());
 
 			URLClassLoader urlClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
 			Class urlClass = URLClassLoader.class;
