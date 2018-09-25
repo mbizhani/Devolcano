@@ -25,6 +25,9 @@ public class KeytoolMavenPlugin extends AbstractDemeterMavenPlugin {
 	@Parameter
 	private String protectionParam;
 
+	@Parameter
+	private KeyTool.EKeyLength keyLength = KeyTool.EKeyLength.L128;
+
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		if (keyStoreDir == null || keyStorePass == null || key == null || protectionParam == null || keyEntry == null) {
@@ -40,7 +43,7 @@ public class KeytoolMavenPlugin extends AbstractDemeterMavenPlugin {
 		logger.info("Generating demeter.ks: final file = {}", keyStore.getPath());
 
 		if (!keyStore.exists()) {
-			KeyTool.generatedKeyStoreWithSecureKey(keyStore, keyStorePass, key, keyEntry, protectionParam);
+			KeyTool.generatedKeyStoreWithSecureKey(keyStore, keyStorePass, key, keyEntry, protectionParam, keyLength);
 		} else {
 			throw new MojoExecutionException("Keystore file already exists!");
 		}
